@@ -26,23 +26,32 @@ namespace InputFix
             Debug.Log("InputFix hooked.");
         }
 
-        private void InputOptionsMenuOnctor(InputOptionsMenu.orig_ctor orig, Menu.InputOptionsMenu self,
+        private static void InputOptionsMenuOnctor(InputOptionsMenu.orig_ctor orig, Menu.InputOptionsMenu self,
             ProcessManager manager)
         {
             orig(self, manager);
-            var ranFromSteam = SteamHook.SteamInitialized;
             string labelText;
-            if (ranFromSteam)
+            if (SteamHook.SteamInitialized)
             {
                 labelText = "InputFix loaded, make sure Steam Input is enabled fully - See README.\n" +
                             "Select the XBox input preset for controllers.";
             }
             else
             {
-                labelText = "Steam not running/available - InputFix disabled.";
+                labelText = "Steam not running/available - InputFix is probably a bad idea.";
             }
 
             var dark = self.inputTesterHolder.darkSprite;
+            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(), new Vector2(480, 54), 100,
+                "InputFix enabled?", "INPUTFIXENABLED");
+            self.pages[0].subObjects.Insert(0, checkBox);
+            checkBox.label.label.MoveBehindOtherNode(dark);
+            checkBox.symbolSprite.MoveBehindOtherNode(dark);
+
+            self.MutualHorizontalButtonBind(self.backButton, checkBox);
+            self.MutualHorizontalButtonBind(checkBox, self.testButton);
+
+
             var label = new MenuLabel(self, self.pages[0],
                 labelText,
                 new Vector2(450, 46), new Vector2(200, 40), false);
@@ -51,16 +60,17 @@ namespace InputFix
             label.label.MoveBehindOtherNode(dark);
             self.pages[0].subObjects.Insert(0, label);
 
-
-            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(), new Vector2(480, 54), 100,
-                "InputFix enabled?", "INPUTFIXENABLED");
-            checkBox.buttonBehav.greyedOut = !ranFromSteam;
-            self.pages[0].subObjects.Insert(0, checkBox);
-            checkBox.label.label.MoveBehindOtherNode(dark);
-            checkBox.symbolSprite.MoveBehindOtherNode(dark);
-
-            self.MutualHorizontalButtonBind(self.backButton, checkBox);
-            self.MutualHorizontalButtonBind(checkBox, self.testButton);
+            if (!SteamHook.RanFromSteam && SteamHook.SteamInitialized)
+            {
+                var nsLabel = new MenuLabel(
+                    self, self.pages[0],
+                    "Game not ran from Steam - Steam Input MUST be enabled GLOBALLY",
+                    new Vector2(450, 15), new Vector2(200, 40), false);
+                nsLabel.label.alignment = FLabelAlignment.Left;
+                nsLabel.label.color = Color.red;
+                nsLabel.label.MoveBehindOtherNode(dark);
+                self.pages[0].subObjects.Insert(0, nsLabel);
+            }
 
             foreach (var sprite in checkBox.roundedRect.sprites)
             {
