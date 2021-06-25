@@ -6,7 +6,7 @@ This means controller handling won't be broken when playing over things like **S
 ## Installation
 
 1. Make sure you have BepInEx/a mod manager for it installed.
-2. Download the mod from [HERE](link pending).
+2. Download the mod from [HERE](https://github.com/PJB3005/RainWorldMods/releases/download/inputfix-0.2.1/InputFix.dll).
 3. Install the mod in your mod manager.
 4. **Make sure Steam Input is enabled, see below.**
 
