@@ -22,7 +22,7 @@ The idea behind this mod is that we give full control to **Steam** (via its XInp
 
 ![](SteamInputGame.png)
 
-**NOTE** that if you don't launch Rain World from the Steam Client directly, **this will not work**. You will have to enable Steam Input globally for all controller types you care about, in Steam's settings. The mod will inform you with red text in the game's input settings if it's not running from Steam to remind you to set this up.
+**NOTE** that if you don't launch Rain World from the Steam client directly, **this will not work** (this can happen if you hit launch from inside your mod manager). You will have to enable Steam Input **globally** for all controller types you care about, in Steam's settings. The mod will inform you with red text in the game's input settings if it's not running from Steam to remind you to set this up.
 
 ![img.png](SteamInputGlobal.png)
 
