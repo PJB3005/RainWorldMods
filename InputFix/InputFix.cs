@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace InputFix
 {
-    [BepInPlugin("pjb3005.input_fix", "InputFix", "0.1.0")]
+    [BepInPlugin("pjb3005.input_fix", "InputFix", "0.3.0")]
     public partial class InputFix : BaseUnityPlugin
     {
         public static bool InputFixEnabled = true;
