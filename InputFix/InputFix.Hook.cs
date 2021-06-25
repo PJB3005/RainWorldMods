@@ -9,6 +9,9 @@ namespace InputFix
 {
     public partial class InputFix
     {
+        private const byte TriggerThreshold = 127;
+        private static bool DebugXInput = false;
+
         public static bool DoInputFix => InputFixEnabled && SteamHook.SteamInitialized;
 
         private static Func<KeyCode, bool> _trampolineInputGetKey;
@@ -106,6 +109,15 @@ namespace InputFix
 
             var port = (code - KeyCode.JoystickButton0) / 20;
             var normalizedCode = NormalizeKeycode(code);
+
+            // Left trigger
+            if (normalizedCode == KeyCode.JoystickButton10)
+                return GetGamepadInfo(port, gamepad => gamepad.bLeftTrigger > TriggerThreshold ? (bool?) true : null);
+
+            // Right trigger
+            if (normalizedCode == KeyCode.JoystickButton11)
+                return GetGamepadInfo(port, gamepad => gamepad.bRightTrigger > TriggerThreshold ? (bool?) true : null);
+
             if (!KeyCodeXInputMap.TryGetValue(normalizedCode, out var mask))
                 return false;
 
@@ -241,7 +253,11 @@ namespace InputFix
                 return _trampolineInputAnyKey();
 
             var baseValue = _trampolineInputAnyKey();
-            return baseValue || GetGamepadInfo(0, gamepad => gamepad.wButtons != 0 ? (bool?) true : null);
+            return baseValue || GetGamepadInfo(0,
+                gp => gp.wButtons != 0 ||
+                      gp.bLeftTrigger > TriggerThreshold || gp.bRightTrigger > TriggerThreshold
+                    ? (bool?) true
+                    : null);
         }
 
         private static T GetGamepadInfo<T>(int port, Func<XInput.XINPUT_GAMEPAD, T?> get) where T : struct
@@ -301,8 +317,16 @@ namespace InputFix
             {
                 for (var i = 0; i < 4; i++)
                 {
+                    var lastPacketNum = state->dwPacketNumber;
                     var status = XInput.XInputGetState((uint) i, state + i);
                     XInputConnected[i] = status == XInput.ERROR_SUCCESS;
+
+                    if (DebugXInput && lastPacketNum != state->dwPacketNumber)
+                    {
+                        ref var gp = ref state->Gamepad;
+                        Debug.Log(
+                            $"XINPUT: [{i}]: {gp.wButtons:X8} ({gp.bLeftTrigger:X2}, {gp.bRightTrigger:X2}) ({gp.sThumbLX},{gp.sThumbLY}) ({gp.sThumbRX},{gp.sThumbRY}) ");
+                    }
                 }
             }
         }
