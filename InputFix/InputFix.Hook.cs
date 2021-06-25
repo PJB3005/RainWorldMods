@@ -9,6 +9,8 @@ namespace InputFix
 {
     public partial class InputFix
     {
+        public static bool DoInputFix => InputFixEnabled && SteamHook.SteamInitialized;
+
         private static Func<KeyCode, bool> _trampolineInputGetKey;
         private static NativeDetour _hookInputGetKey;
         private static Func<string[]> _trampolineInputGetJoystickNames;
@@ -21,7 +23,7 @@ namespace InputFix
         private static readonly XInput.XINPUT_STATE[] XInputStates = new XInput.XINPUT_STATE[4];
         private static readonly bool[] XInputConnected = new bool[4];
         private static int _lastFrameCount;
-        
+
         private static readonly Dictionary<KeyCode, ushort> KeyCodeXInputMap = new Dictionary<KeyCode, ushort>
         {
             [KeyCode.JoystickButton0] = XInput.XINPUT_GAMEPAD_A,
@@ -270,7 +272,7 @@ namespace InputFix
 
         private static bool PreHookChecks()
         {
-            if (!InputFixEnabled)
+            if (!DoInputFix)
                 return false;
 
             var frameCount = Time.frameCount;

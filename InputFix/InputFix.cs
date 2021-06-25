@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.IO;
 using BepInEx;
 using Menu;
-using MonoMod.RuntimeDetour;
 using RWCustom;
 using UnityEngine;
-using static InputFix.XInput;
 using InputOptionsMenu = On.Menu.InputOptionsMenu;
 
 namespace InputFix
@@ -22,10 +16,11 @@ namespace InputFix
         {
             LoadSetting();
             Debug.Log($"InputFix enabled: {InputFixEnabled}.");
- 
+
             On.Menu.InputOptionsMenu.ctor += InputOptionsMenuOnctor;
             // On.Menu.PauseMenu.ctor += PauseMenuOnctor;
 
+            SteamHook.Init();
             InitHooks();
 
             Debug.Log("InputFix hooked.");
@@ -35,11 +30,22 @@ namespace InputFix
             ProcessManager manager)
         {
             orig(self, manager);
+            var ranFromSteam = SteamHook.SteamInitialized;
+            string labelText;
+            if (ranFromSteam)
+            {
+                labelText = "InputFix loaded, make sure Steam Input is enabled fully - See README.\n" +
+                            "Select the XBox input preset for controllers.";
+            }
+            else
+            {
+                labelText = "Steam not running/available - InputFix disabled.";
+            }
 
             var dark = self.inputTesterHolder.darkSprite;
             var label = new MenuLabel(self, self.pages[0],
-                "Steam Input should be enabled for InputFix - See README.\nMake sure to select the XBox input preset.",
-                new Vector2(450, 45), new Vector2(200, 40), false);
+                labelText,
+                new Vector2(450, 46), new Vector2(200, 40), false);
             label.label.alignment = FLabelAlignment.Left;
             label.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             label.label.MoveBehindOtherNode(dark);
@@ -48,13 +54,14 @@ namespace InputFix
 
             var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(), new Vector2(480, 54), 100,
                 "InputFix enabled?", "INPUTFIXENABLED");
+            checkBox.buttonBehav.greyedOut = !ranFromSteam;
             self.pages[0].subObjects.Insert(0, checkBox);
             checkBox.label.label.MoveBehindOtherNode(dark);
             checkBox.symbolSprite.MoveBehindOtherNode(dark);
-            
+
             self.MutualHorizontalButtonBind(self.backButton, checkBox);
             self.MutualHorizontalButtonBind(checkBox, self.testButton);
-            
+
             foreach (var sprite in checkBox.roundedRect.sprites)
             {
                 sprite.MoveBehindOtherNode(dark);
@@ -102,9 +109,9 @@ namespace InputFix
             public void SetChecked(CheckBox box, bool c)
             {
                 InputFixEnabled = c;
-                
+
                 SaveSetting();
-                
+
                 Debug.Log($"InputFix enabled: {InputFixEnabled}.");
             }
         }
