@@ -1,4 +1,5 @@
 ﻿# InputFix - Fixing Controller Handling
+*By PJB*
 
 This mod replaces the game's controller handling so it should work better with Steam Input.
 This means controller handling won't be broken when playing over things like **Steam Remote Play**.
