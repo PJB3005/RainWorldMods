@@ -261,10 +261,19 @@ namespace InputFix
                 return default;
             }
 
-            var singlePort = port - 1;
-            if (XInputConnected[singlePort])
+            // XInput is not guaranteed to pack controllers contiguously,
+            // so port 2 can be empty while 1 & 3 are connected.
+            // Rain World doesn't expect this so we need to emulate it to be contiguous.
+            // Should be noted that I think Unity doesn't make contiguity guarantees either, or it's bugged.
+            // So technically I'm fixing an EXTRA bug here!
+            var c = port;
+            for (var i = 0; i < 4; i++)
             {
-                return get(XInputStates[singlePort].Gamepad) ?? default;
+                if (!XInputConnected[i])
+                    continue;
+
+                if (--c == 0)
+                    return get(XInputStates[i].Gamepad) ?? default;
             }
 
             return default;
