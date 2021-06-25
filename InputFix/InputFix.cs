@@ -1,9 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using BepInEx;
 using Menu;
 using RWCustom;
 using UnityEngine;
-using InputOptionsMenu = On.Menu.InputOptionsMenu;
 
 namespace InputFix
 {
@@ -12,12 +12,29 @@ namespace InputFix
     {
         public static bool InputFixEnabled = true;
 
+        private static readonly Dictionary<KeyCode, string> KeyCodeNames = new Dictionary<KeyCode, string>
+        {
+            [KeyCode.JoystickButton0] = "A",
+            [KeyCode.JoystickButton1] = "B",
+            [KeyCode.JoystickButton2] = "X",
+            [KeyCode.JoystickButton3] = "Y",
+            [KeyCode.JoystickButton4] = "LB",
+            [KeyCode.JoystickButton5] = "RB",
+            [KeyCode.JoystickButton6] = "Back",
+            [KeyCode.JoystickButton7] = "Start",
+            [KeyCode.JoystickButton8] = "LSB",
+            [KeyCode.JoystickButton9] = "RSB",
+            [KeyCode.JoystickButton10] = "LT",
+            [KeyCode.JoystickButton11] = "RT"
+        };
+
         public InputFix()
         {
             LoadSetting();
             Debug.Log($"InputFix enabled: {InputFixEnabled}.");
 
             On.Menu.InputOptionsMenu.ctor += InputOptionsMenuOnctor;
+            On.Menu.InputOptionsMenu.InputSelectButton.ButtonText += InputSelectButtonOnButtonText;
             // On.Menu.PauseMenu.ctor += PauseMenuOnctor;
 
             SteamHook.Init();
@@ -26,7 +43,31 @@ namespace InputFix
             Debug.Log("InputFix hooked.");
         }
 
-        private static void InputOptionsMenuOnctor(InputOptionsMenu.orig_ctor orig, Menu.InputOptionsMenu self,
+        private static string InputSelectButtonOnButtonText(
+            On.Menu.InputOptionsMenu.InputSelectButton.orig_ButtonText orig,
+            Menu.Menu menu,
+            bool gamePadBool,
+            int player,
+            int button)
+        {
+            if (!DoInputFix || !gamePadBool)
+                return orig(menu, gamePadBool, player, button);
+
+            var optionsMenu = (InputOptionsMenu) menu;
+            var controls = optionsMenu.manager.rainWorld.options.controls[player];
+            var gpButton = controls.gamePadButtons[button];
+            var normalized = NormalizeKeycode(gpButton);
+
+            if (!KeyCodeNames.TryGetValue(normalized, out var str))
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                return orig(menu, gamePadBool, player, button);
+
+            return str;
+        }
+
+        private static void InputOptionsMenuOnctor(
+            On.Menu.InputOptionsMenu.orig_ctor orig,
+            InputOptionsMenu self,
             ProcessManager manager)
         {
             orig(self, manager);
@@ -42,7 +83,7 @@ namespace InputFix
             }
 
             var dark = self.inputTesterHolder.darkSprite;
-            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(), new Vector2(480, 54), 100,
+            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(self), new Vector2(480, 54), 100,
                 "InputFix enabled?", "INPUTFIXENABLED");
             self.pages[0].subObjects.Insert(0, checkBox);
             checkBox.label.label.MoveBehindOtherNode(dark);
@@ -111,6 +152,13 @@ namespace InputFix
 
         private sealed class InputFixEnabledOwner : CheckBox.IOwnCheckBox
         {
+            private readonly InputOptionsMenu _menu;
+
+            public InputFixEnabledOwner(InputOptionsMenu menu)
+            {
+                _menu = menu;
+            }
+
             public bool GetChecked(CheckBox box)
             {
                 return InputFixEnabled;
@@ -122,7 +170,17 @@ namespace InputFix
 
                 SaveSetting();
 
+                UpdateAllGamepadButtonTexts(_menu);
+
                 Debug.Log($"InputFix enabled: {InputFixEnabled}.");
+            }
+        }
+
+        private static void UpdateAllGamepadButtonTexts(InputOptionsMenu menu)
+        {
+            foreach (var button in menu.gamePadButtonButtons)
+            {
+                button.RefreshLabelText();
             }
         }
     }
