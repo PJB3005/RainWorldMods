@@ -27,8 +27,5 @@
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Assemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Assemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
   </ItemGroup>
  </Project>
