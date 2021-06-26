@@ -30,6 +30,10 @@ namespace Sharpener
         private readonly NativeDetour _detourHeight;
         private readonly Func<int> _trampolineHeight;
 
+        private readonly Detour _detourCameraCtor;
+        private static Action _trampolineCameraCtor;
+
+
         private readonly GameObject _cameraHolder;
         private RenderTexture _gameRenderTexture;
         private RawImage _scaleSprite;
@@ -75,8 +79,8 @@ namespace Sharpener
 
                 _trampolineSetResolution = _detourSetResolution.GenerateTrampoline<SetResolution>();
 
-                _realResolution = new IntVector2(1920, 1080);
-                _trampolineSetResolution(_realResolution.x, _realResolution.y, false);
+                _realResolution = new IntVector2(2560, 1440);
+                _trampolineSetResolution(_realResolution.x, _realResolution.y, true);
 
                 _gameRenderTexture = new RenderTexture(1, 1, 24);
 
@@ -95,6 +99,12 @@ namespace Sharpener
                     nameof(HookScreenHeight),
                     out _trampolineHeight,
                     out _detourHeight);
+
+                var cameraCtor = typeof(Camera).GetConstructor(new Type[0]);
+                var toMethod = typeof(SharpenerMod).GetMethod(nameof(HookCameraCtor), BindingFlags.NonPublic | BindingFlags.Static);
+
+                _detourCameraCtor = new Detour(cameraCtor, toMethod);
+                _trampolineCameraCtor = _detourCameraCtor.GenerateTrampoline<Action>();
             }
             catch (Exception e)
             {
@@ -110,6 +120,12 @@ namespace Sharpener
             foreach (var camera in Camera.allCameras)
             {
                 Debug.Log($"{camera.name}, {camera.tag}, {camera.targetTexture}");
+
+                if (!camera.CompareTag("MainCamera"))
+                {
+                    camera.backgroundColor = Color.yellow;
+                    camera.enabled = false;
+                }
             }
         }
 
@@ -122,7 +138,7 @@ namespace Sharpener
                 //_scaleSprite.texture = _gameRenderTexture;
             }
 
-            //_futile.camera.targetTexture = _gameRenderTexture;
+            _futile.camera.targetTexture = _gameRenderTexture;
         }
 
         private static void FStageOnCtor(On.FStage.orig_ctor orig, FStage self, string s)
@@ -141,6 +157,7 @@ namespace Sharpener
             self.camera.cullingMask = 1 << LayerFutile;
             //self.camera.backgroundColor = Color.red;
             _futile._cameraHolder.AddComponent<Scaler>();
+            self.camera.depth = -100;
         }
 
         private static void HookScreenSetResolution(int width, int height, bool fullscreen)
@@ -165,6 +182,14 @@ namespace Sharpener
         private static int HookScreenHeight()
         {
             return _instance._targetRes.y;
+        }
+
+        private static void HookCameraCtor()
+        {
+            MessageBoxW(IntPtr.Zero, "A", "A", 0);
+            _trampolineCameraCtor();
+            Debug.Log("CAMERA MADE, WHODUNNIT");
+            Debug.Log(Environment.StackTrace);
         }
 
         [DllImport("user32.dll")]
@@ -199,54 +224,53 @@ namespace Sharpener
                     _lastKeyDown = false;
             }
 
-            /*private void OnRenderImage(RenderTexture src, RenderTexture dest)
+            private void OnPreRender()
             {
-                Debug.Log("YES");
-                var realRes = _instance._realResolution;
-                var x = 1366f / realRes.x;
-                var y = 768f / realRes.y;
+                GL.LoadProjectionMatrix(GL.GetGPUProjectionMatrix(Camera.current.projectionMatrix, true));
+            }
 
-                GL.PushMatrix();
-                GL.LoadOrtho();
-
-                if (_enabled)
-                {
-                    src.filterMode = FilterMode.Point;
-                    Graphics.SetRenderTarget(_instance._upscaler);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), src, new Rect(0, 0, x, y), 0, 0, 0, 0);
-                    Graphics.SetRenderTarget(dest);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
-                        Color.black);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._upscaler, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
-                }
-                else
-                {
-                    src.filterMode = FilterMode.Bilinear;
-                    Graphics.SetRenderTarget(dest);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
-                        Color.black);
-
-                    Graphics.DrawTexture(new Rect(0, 1, 1, -1), src, new Rect(0, 0, x, y), 0, 0, 0, 0);
-                }
-
-                GL.PopMatrix();
-
-                //Graphics.DrawTexture(new Rect(0, 0, 100, 100), Texture2D.whiteTexture, new Rect(0, 0, 100, 100), 0, 0, 0, 0, Color.yellow);
-                //Graphics.Blit(src, dest);
-            }*/
-
-            /*private void OnPostRender()
+            private void OnPostRender()
             {
                 RenderTexture.active = null;
 
                 GL.PushMatrix();
                 GL.LoadOrtho();
 
-                Graphics.DrawTexture(new Rect(0.5f, 0.0f, 0.5f, 0.5f), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
-                    Color.magenta);
+                if (_enabled)
+                {
+                    _instance._upscaler.filterMode = FilterMode.Bilinear;
+                    _instance._gameRenderTexture.filterMode = FilterMode.Point;
+                    Graphics.SetRenderTarget(_instance._upscaler);
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
+                    RenderTexture.active = null;
+                    GL.LoadOrtho();
+                    GL.Viewport(new Rect(0, 0, _instance._realResolution.x, _instance._realResolution.y));
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
+                        Color.black);
+                    Graphics.DrawTexture(new Rect(0, 1, 1, -1), _instance._upscaler, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
+                }
+                else
+                {
+                    _instance._gameRenderTexture.filterMode = FilterMode.Bilinear;
+                    Graphics.SetRenderTarget(null);
+                    GL.LoadOrtho();
+                    GL.Viewport(new Rect(0, 0, _instance._realResolution.x, _instance._realResolution.y));
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
+                        Color.black);
+
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
+                }
+
+                /*
+                Graphics.DrawTexture(
+                    new Rect(0.0f, 0.0f, 1f, 1f),
+                    _instance._gameRenderTexture,
+                    new Rect(0, 0, 1, 1),
+                    0, 0, 0, 0);
+                    */
 
                 GL.PopMatrix();
-            }*/
+            }
         }
 
         private static void MakeNativeHook<TDelegate>(
