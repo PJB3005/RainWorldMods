@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using BepInEx;
 using MonoMod.RuntimeDetour;
-using On.Menu;
 using RWCustom;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Sharpener
 {
@@ -20,32 +19,34 @@ namespace Sharpener
         public const int LayerFutile = 1;
         public const int LayerReScale = 2;
 
-        private readonly Camera _scaleCamera;
-
-        private readonly SetResolution _trampolineSetResolution;
-        private readonly NativeDetour _detourSetResolution;
-
-        private readonly NativeDetour _detourWidth;
-        private readonly Func<int> _trampolineWidth;
-        private readonly NativeDetour _detourHeight;
-        private readonly Func<int> _trampolineHeight;
+        private static SetResolution _trampolineSetResolution;
+        private static NativeDetour _detourSetResolution;
+        private static NativeDetour _detourWidth;
+        private static Func<int> _trampolineWidth;
+        private static NativeDetour _detourHeight;
+        private static Func<int> _trampolineHeight;
         private static NativeDetour _detourMousePosition;
         private static Func<Vector3> _trampolineMousePosition;
+        private static NativeDetour _detourFullscreenSet;
+        private static Action<bool> _trampolineFullscreenSet;
 
-        private readonly GameObject _cameraHolder;
         private RenderTexture _gameRenderTexture;
-        private RawImage _scaleSprite;
         private Futile _futile;
 
-        private IntVector2 _targetRes = new IntVector2(600, 400);
+        private IntVector2 _gameRes = new IntVector2(600, 400);
+        private IntVector2 _realRes;
 
         private RenderTexture _upscaler;
-        private IntVector2 _realResolution;
+        private Resolution _fullscreenRes;
+
+        private bool _badCameraDisabled;
 
         public SharpenerMod()
         {
             try
             {
+                _fullscreenRes = Screen.resolutions.OrderBy(r => r.width).ThenBy(r => r.height).Last();
+
                 _instance = this;
 
                 _upscaler = new RenderTexture(1366 * 2, 768 * 2, 0);
@@ -53,16 +54,13 @@ namespace Sharpener
 
                 On.Futile.Init += FutileOnInit;
                 On.FStage.ctor += FStageOnCtor;
-                On.Menu.MainMenu.ctor += MainMenuOnCtor;
+                // On.Menu.MainMenu.ctor += MainMenuOnCtor;
 
                 _detourSetResolution = new NativeDetour(
                     (SetResolution) Screen.SetResolution,
                     (SetResolution) HookScreenSetResolution);
 
                 _trampolineSetResolution = _detourSetResolution.GenerateTrampoline<SetResolution>();
-
-                _realResolution = new IntVector2(1920, 1080);
-                _trampolineSetResolution(_realResolution.x, _realResolution.y, false);
 
                 _gameRenderTexture = new RenderTexture(1, 1, 24);
 
@@ -83,6 +81,14 @@ namespace Sharpener
                     out _detourHeight);
 
                 // ReSharper disable once PossibleNullReferenceException
+                var setFullscreen = typeof(Screen).GetProperty(nameof(Screen.fullScreen)).GetSetMethod();
+                MakeNativeHook(
+                    setFullscreen,
+                    nameof(HookSetFullscreen),
+                    out _trampolineFullscreenSet,
+                    out _detourFullscreenSet);
+
+                // ReSharper disable once PossibleNullReferenceException
                 var getMousePosition = typeof(Input).GetProperty(nameof(Input.mousePosition)).GetGetMethod();
                 MakeNativeHook(
                     getMousePosition,
@@ -96,6 +102,7 @@ namespace Sharpener
             }
         }
 
+        /*
         private void MainMenuOnCtor(MainMenu.orig_ctor orig, Menu.MainMenu self, ProcessManager manager,
             bool showRegionSpecificBkg)
         {
@@ -111,18 +118,43 @@ namespace Sharpener
                     camera.enabled = false;
                 }
             }
-        }
+        }*/
 
         public void Update()
         {
-            if (_targetRes != new IntVector2(_gameRenderTexture.width, _gameRenderTexture.height))
+            if (!_badCameraDisabled)
             {
-                Debug.Log($"{_targetRes.x}, {_targetRes.y}");
-                _gameRenderTexture = new RenderTexture(_targetRes.x, _targetRes.y, 24);
-                //_scaleSprite.texture = _gameRenderTexture;
+                foreach (var camera in Camera.allCameras)
+                {
+                    Debug.Log($"CAMERA: {camera.name}, {camera.tag}, {camera.targetTexture}");
+
+                    if (!camera.CompareTag("MainCamera"))
+                    {
+                        Debug.Log("Disabling bad camera");
+                        camera.enabled = false;
+                        _badCameraDisabled = true;
+                    }
+                }
             }
 
-            _futile.camera.targetTexture = _gameRenderTexture;
+            var newScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
+            if (newScreenRes != _realRes)
+            {
+                _realRes = newScreenRes;
+                Debug.Log($"NEW SCREEN RESOLUTION: {_realRes}");
+            }
+
+            if (_gameRes != new IntVector2(_gameRenderTexture.width, _gameRenderTexture.height))
+            {
+                Debug.Log($"{_gameRes.x}, {_gameRes.y}");
+                Destroy(_gameRenderTexture);
+                _gameRenderTexture = new RenderTexture(_gameRes.x, _gameRes.y, 24);
+                _futile.camera.targetTexture = _gameRenderTexture;
+
+                Destroy(_upscaler);
+                _upscaler = new RenderTexture(_gameRes.x * 2, _gameRes.y * 2, 0);
+                _upscaler.filterMode = FilterMode.Bilinear;
+            }
         }
 
         private static void FStageOnCtor(On.FStage.orig_ctor orig, FStage self, string s)
@@ -150,7 +182,7 @@ namespace Sharpener
 
             try
             {
-                _instance._targetRes = new IntVector2(width, height);
+                _instance._gameRes = new IntVector2(width, height);
             }
             catch (Exception e)
             {
@@ -160,28 +192,43 @@ namespace Sharpener
 
         private static int HookScreenWidth()
         {
-            return _instance._targetRes.x;
+            return _instance._gameRes.x;
         }
 
         private static int HookScreenHeight()
         {
-            return _instance._targetRes.y;
+            return _instance._gameRes.y;
         }
 
         private static Vector3 HookMousePosition()
         {
             var realPosition = _trampolineMousePosition();
-            var realRes = new Vector2(_instance._realResolution.x, _instance._realResolution.y);
-            var gameRes = new Vector2(_instance._targetRes.x, _instance._targetRes.y);
+            var realRes = new Vector2(_instance._realRes.x, _instance._realRes.y);
+            var gameRes = new Vector2(_instance._gameRes.x, _instance._gameRes.y);
             var scale = gameRes.x / realRes.x;
 
             var scaled = realPosition * scale;
 
+            /*
             Debug.Log($"REAL: {realPosition}");
             Debug.Log($"SCALED: {scaled}");
             Debug.Log($"SCALE: {scale}");
+            */
 
             return scaled;
+        }
+
+        private static void HookSetFullscreen(bool value)
+        {
+            if (value == Screen.fullScreen)
+                return;
+
+            _trampolineFullscreenSet(value);
+
+            if (value)
+            {
+                _trampolineSetResolution(_instance._fullscreenRes.width, _instance._fullscreenRes.height, true);
+            }
         }
 
         [DllImport("user32.dll")]
@@ -224,10 +271,11 @@ namespace Sharpener
                 {
                     _instance._gameRenderTexture.filterMode = FilterMode.Point;
                     Graphics.SetRenderTarget(_instance._upscaler);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0,
+                        0, 0);
                     RenderTexture.active = null;
                     GL.LoadOrtho();
-                    GL.Viewport(new Rect(0, 0, _instance._realResolution.x, _instance._realResolution.y));
+                    GL.Viewport(new Rect(0, 0, _instance._realRes.x, _instance._realRes.y));
                     Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
                         Color.black);
                     Graphics.DrawTexture(new Rect(0, 1, 1, -1), _instance._upscaler, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
@@ -237,11 +285,12 @@ namespace Sharpener
                     _instance._gameRenderTexture.filterMode = FilterMode.Bilinear;
                     Graphics.SetRenderTarget(null);
                     GL.LoadOrtho();
-                    GL.Viewport(new Rect(0, 0, _instance._realResolution.x, _instance._realResolution.y));
+                    GL.Viewport(new Rect(0, 0, _instance._realRes.x, _instance._realRes.y));
                     Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
                         Color.black);
 
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
+                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0,
+                        0, 0);
                 }
 
                 /*
@@ -280,6 +329,13 @@ namespace Sharpener
 
             detour = new NativeDetour(fromMethod, toMethod);
             trampoline = detour.GenerateTrampoline<TDelegate>();
+        }
+
+        private enum RenderMode
+        {
+            GameDefault,
+            NativeNearest,
+            UpDown
         }
     }
 }
