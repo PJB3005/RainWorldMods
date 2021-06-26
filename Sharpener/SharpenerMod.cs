@@ -29,10 +29,8 @@ namespace Sharpener
         private readonly Func<int> _trampolineWidth;
         private readonly NativeDetour _detourHeight;
         private readonly Func<int> _trampolineHeight;
-
-        private readonly Detour _detourCameraCtor;
-        private static Action _trampolineCameraCtor;
-
+        private static NativeDetour _detourMousePosition;
+        private static Func<Vector3> _trampolineMousePosition;
 
         private readonly GameObject _cameraHolder;
         private RenderTexture _gameRenderTexture;
@@ -53,22 +51,6 @@ namespace Sharpener
                 _upscaler = new RenderTexture(1366 * 2, 768 * 2, 0);
                 _upscaler.filterMode = FilterMode.Bilinear;
 
-                /*
-                _cameraHolder = new GameObject();
-
-                _scaleCamera = _cameraHolder.AddComponent<Camera>();
-                _scaleCamera.depth = 200;
-                _scaleCamera.cullingMask = 3;
-                _scaleCamera.name = "ScaleCamera";
-                _scaleCamera.tag = "MainCamera";
-                _scaleCamera.backgroundColor = Color.yellow;
-
-                _cameraHolder.AddComponent<CameraPostRender>();
-                */
-
-                // _scaleSprite = _cameraHolder.AddComponent<RawImage>();
-                // _cameraHolder.layer = LayerReScale;
-
                 On.Futile.Init += FutileOnInit;
                 On.FStage.ctor += FStageOnCtor;
                 On.Menu.MainMenu.ctor += MainMenuOnCtor;
@@ -79,8 +61,8 @@ namespace Sharpener
 
                 _trampolineSetResolution = _detourSetResolution.GenerateTrampoline<SetResolution>();
 
-                _realResolution = new IntVector2(2560, 1440);
-                _trampolineSetResolution(_realResolution.x, _realResolution.y, true);
+                _realResolution = new IntVector2(1920, 1080);
+                _trampolineSetResolution(_realResolution.x, _realResolution.y, false);
 
                 _gameRenderTexture = new RenderTexture(1, 1, 24);
 
@@ -100,11 +82,13 @@ namespace Sharpener
                     out _trampolineHeight,
                     out _detourHeight);
 
-                var cameraCtor = typeof(Camera).GetConstructor(new Type[0]);
-                var toMethod = typeof(SharpenerMod).GetMethod(nameof(HookCameraCtor), BindingFlags.NonPublic | BindingFlags.Static);
-
-                _detourCameraCtor = new Detour(cameraCtor, toMethod);
-                _trampolineCameraCtor = _detourCameraCtor.GenerateTrampoline<Action>();
+                // ReSharper disable once PossibleNullReferenceException
+                var getMousePosition = typeof(Input).GetProperty(nameof(Input.mousePosition)).GetGetMethod();
+                MakeNativeHook(
+                    getMousePosition,
+                    nameof(HookMousePosition),
+                    out _trampolineMousePosition,
+                    out _detourMousePosition);
             }
             catch (Exception e)
             {
@@ -184,12 +168,20 @@ namespace Sharpener
             return _instance._targetRes.y;
         }
 
-        private static void HookCameraCtor()
+        private static Vector3 HookMousePosition()
         {
-            MessageBoxW(IntPtr.Zero, "A", "A", 0);
-            _trampolineCameraCtor();
-            Debug.Log("CAMERA MADE, WHODUNNIT");
-            Debug.Log(Environment.StackTrace);
+            var realPosition = _trampolineMousePosition();
+            var realRes = new Vector2(_instance._realResolution.x, _instance._realResolution.y);
+            var gameRes = new Vector2(_instance._targetRes.x, _instance._targetRes.y);
+            var scale = gameRes.x / realRes.x;
+
+            var scaled = realPosition * scale;
+
+            Debug.Log($"REAL: {realPosition}");
+            Debug.Log($"SCALED: {scaled}");
+            Debug.Log($"SCALE: {scale}");
+
+            return scaled;
         }
 
         [DllImport("user32.dll")]
@@ -198,14 +190,6 @@ namespace Sharpener
             [MarshalAs(UnmanagedType.LPWStr)] string lpText,
             [MarshalAs(UnmanagedType.LPWStr)] string lpCaption,
             uint uType);
-
-        private sealed class CameraPostRender : MonoBehaviour
-        {
-            public void OnPostRender()
-            {
-                Graphics.DrawTexture(new Rect(0, 0, 100, 100), _instance._gameRenderTexture);
-            }
-        }
 
         private sealed class Scaler : MonoBehaviour
         {
@@ -238,7 +222,6 @@ namespace Sharpener
 
                 if (_enabled)
                 {
-                    _instance._upscaler.filterMode = FilterMode.Bilinear;
                     _instance._gameRenderTexture.filterMode = FilterMode.Point;
                     Graphics.SetRenderTarget(_instance._upscaler);
                     Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
