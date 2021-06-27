@@ -64,7 +64,7 @@ namespace InputFix
                         RanFromSteam = true;
                     }
 
-                    Debug.Log($"{name}: {path}");
+                    // Debug.Log($"{name}: {path}");
                 } while (Module32Next(hSnapShot, &me32));
             }
             finally
