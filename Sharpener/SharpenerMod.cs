@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,9 +17,6 @@ namespace Sharpener
 
         private static SharpenerMod _instance;
 
-        public const int LayerFutile = 1;
-        public const int LayerReScale = 2;
-
         private static SetResolution _trampolineSetResolution;
         private static NativeDetour _detourSetResolution;
         private static NativeDetour _detourWidth;
@@ -35,26 +33,56 @@ namespace Sharpener
 
         private IntVector2 _gameRes = new IntVector2(600, 400);
         private IntVector2 _realRes;
+        private IntVector2 _fullscreenRes;
 
         private RenderTexture _upscaler;
-        private Resolution _fullscreenRes;
 
         private bool _badCameraDisabled;
+
+        private RenderMode _mode = RenderMode.UpDown;
+        private bool _lastKeyDown;
+
+        private bool HighResBackbuffer => !Screen.fullScreen || _mode == RenderMode.GameDefault;
+        private bool IsUpDown => Screen.fullScreen && _mode == RenderMode.UpDown;
+
+        private Material _blitShader;
+
+        private const string BlitShaderSource = @"
+Shader ""Tutorial/Basic"" {
+        Properties {
+            _MainTex (""Base (RGB)"", 2D) = ""white"" { }
+        }
+        SubShader {
+            Pass {
+                Blend Off
+                Cull Off
+                ZTest Always
+                SetTexture [_MainTex] {
+                    Combine texture
+                }
+            }
+        }
+    }
+";
 
         public SharpenerMod()
         {
             try
             {
-                _fullscreenRes = Screen.resolutions.OrderBy(r => r.width).ThenBy(r => r.height).Last();
+                _blitShader = new Material(BlitShaderSource);
+
+                _fullscreenRes = Screen.resolutions
+                    .OrderBy(r => r.width)
+                    .ThenBy(r => r.height)
+                    .Last()
+                    .ToVec();
 
                 _instance = this;
 
-                _upscaler = new RenderTexture(1366 * 2, 768 * 2, 0);
+                _upscaler = new RenderTexture(1, 1, 0);
                 _upscaler.filterMode = FilterMode.Bilinear;
 
                 On.Futile.Init += FutileOnInit;
-                On.FStage.ctor += FStageOnCtor;
-                // On.Menu.MainMenu.ctor += MainMenuOnCtor;
 
                 _detourSetResolution = new NativeDetour(
                     (SetResolution) Screen.SetResolution,
@@ -102,26 +130,13 @@ namespace Sharpener
             }
         }
 
-        /*
-        private void MainMenuOnCtor(MainMenu.orig_ctor orig, Menu.MainMenu self, ProcessManager manager,
-            bool showRegionSpecificBkg)
-        {
-            orig(self, manager, showRegionSpecificBkg);
-
-            foreach (var camera in Camera.allCameras)
-            {
-                Debug.Log($"{camera.name}, {camera.tag}, {camera.targetTexture}");
-
-                if (!camera.CompareTag("MainCamera"))
-                {
-                    camera.backgroundColor = Color.yellow;
-                    camera.enabled = false;
-                }
-            }
-        }*/
+        private bool Fuck = false;
 
         public void Update()
         {
+            // Rain World has an extra camera in the bottom left corner.
+            // It doesn't do anything except break rendering when going off-screen and waste CPU/GPU.
+            // So we disable it as soon as we can.
             if (!_badCameraDisabled)
             {
                 foreach (var camera in Camera.allCameras)
@@ -137,31 +152,45 @@ namespace Sharpener
                 }
             }
 
-            var newScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
-            if (newScreenRes != _realRes)
+            if (Input.GetKey(KeyCode.F10) && !_lastKeyDown)
             {
-                _realRes = newScreenRes;
-                Debug.Log($"NEW SCREEN RESOLUTION: {_realRes}");
+                _lastKeyDown = true;
+                _mode = (RenderMode) (((int) _mode + 1) % 3);
             }
 
-            if (_gameRes != new IntVector2(_gameRenderTexture.width, _gameRenderTexture.height))
+            if (!Input.GetKey(KeyCode.F10))
+                _lastKeyDown = false;
+
+            // Update framebuffers if game resolution changed.
+            if (_gameRes != _gameRenderTexture.Size())
             {
-                Debug.Log($"{_gameRes.x}, {_gameRes.y}");
+                Debug.Log($"Regenerating game render targets: {_gameRes}");
                 Destroy(_gameRenderTexture);
                 _gameRenderTexture = new RenderTexture(_gameRes.x, _gameRes.y, 24);
-                _futile.camera.targetTexture = _gameRenderTexture;
 
                 Destroy(_upscaler);
                 _upscaler = new RenderTexture(_gameRes.x * 2, _gameRes.y * 2, 0);
                 _upscaler.filterMode = FilterMode.Bilinear;
             }
-        }
 
-        private static void FStageOnCtor(On.FStage.orig_ctor orig, FStage self, string s)
-        {
-            orig(self, s);
+            // Set camera target texture if rendering to UpDown.
+            _futile.camera.targetTexture = IsUpDown ? _gameRenderTexture : null;
 
-            self.layer = LayerFutile;
+            // Set resolution to fullscreen res if fullscreen and not using GameDefault.
+            var shouldSetScreenRes = HighResBackbuffer ? _gameRes : _fullscreenRes;
+            var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
+            if (shouldSetScreenRes != curScreenRes)
+            {
+                curScreenRes = shouldSetScreenRes;
+                var (w, h) = shouldSetScreenRes;
+                _trampolineSetResolution(w, h, Screen.fullScreen);
+            }
+
+            if (curScreenRes != _realRes)
+            {
+                _realRes = curScreenRes;
+                Debug.Log($"NEW SCREEN RESOLUTION: {_realRes}");
+            }
         }
 
         private void FutileOnInit(On.Futile.orig_Init orig, Futile self, FutileParams futileParams)
@@ -170,41 +199,25 @@ namespace Sharpener
 
             _futile = self;
 
-            self.camera.cullingMask = 1 << LayerFutile;
-            //self.camera.backgroundColor = Color.red;
             _futile._cameraHolder.AddComponent<Scaler>();
-            self.camera.depth = -100;
         }
 
         private static void HookScreenSetResolution(int width, int height, bool fullscreen)
         {
-            Debug.Log($"SET RES: {width}, {height}");
-
-            try
-            {
-                _instance._gameRes = new IntVector2(width, height);
-            }
-            catch (Exception e)
-            {
-                MessageBoxW(IntPtr.Zero, e.ToString(), "Fuck", 0);
-            }
+            _instance._gameRes = new IntVector2(width, height);
         }
 
-        private static int HookScreenWidth()
-        {
-            return _instance._gameRes.x;
-        }
-
-        private static int HookScreenHeight()
-        {
-            return _instance._gameRes.y;
-        }
+        private static int HookScreenWidth() => _instance._gameRes.x;
+        private static int HookScreenHeight() => _instance._gameRes.y;
 
         private static Vector3 HookMousePosition()
         {
             var realPosition = _trampolineMousePosition();
-            var realRes = new Vector2(_instance._realRes.x, _instance._realRes.y);
-            var gameRes = new Vector2(_instance._gameRes.x, _instance._gameRes.y);
+            if (_instance.HighResBackbuffer)
+                return realPosition;
+
+            var realRes = _instance._realRes.ToVector2();
+            var gameRes = _instance._gameRes.ToVector2();
             var scale = gameRes.x / realRes.x;
 
             var scaled = realPosition * scale;
@@ -227,7 +240,8 @@ namespace Sharpener
 
             if (value)
             {
-                _trampolineSetResolution(_instance._fullscreenRes.width, _instance._fullscreenRes.height, true);
+                var (w, h) = _instance._fullscreenRes;
+                _trampolineSetResolution(w, h, true);
             }
         }
 
@@ -240,24 +254,10 @@ namespace Sharpener
 
         private sealed class Scaler : MonoBehaviour
         {
-            private bool _enabled = true;
-            private bool _lastKeyDown;
-
-            private void Update()
-            {
-                if (Input.GetKey(KeyCode.F10) && !_lastKeyDown)
-                {
-                    _lastKeyDown = true;
-                    _enabled ^= true;
-                }
-
-                if (!Input.GetKey(KeyCode.F10))
-                    _lastKeyDown = false;
-            }
-
             private void OnPreRender()
             {
-                GL.LoadProjectionMatrix(GL.GetGPUProjectionMatrix(Camera.current.projectionMatrix, true));
+                if (_instance.IsUpDown)
+                    GL.LoadProjectionMatrix(GL.GetGPUProjectionMatrix(Camera.current.projectionMatrix, true));
             }
 
             private void OnPostRender()
@@ -267,39 +267,34 @@ namespace Sharpener
                 GL.PushMatrix();
                 GL.LoadOrtho();
 
-                if (_enabled)
+                if (_instance.IsUpDown)
                 {
                     _instance._gameRenderTexture.filterMode = FilterMode.Point;
-                    Graphics.SetRenderTarget(_instance._upscaler);
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0,
-                        0, 0);
+                    RenderTexture.active = _instance._upscaler;
+
+                    // Alpha channel to 1
+                    GL.Clear(true, true, Color.black);
+
+                    Graphics.DrawTexture(
+                        new Rect(0, 0, 1, 1),
+                        _instance._gameRenderTexture,
+                        new Rect(0, 0, 1, 1),
+                        0, 0, 0, 0,
+                        _instance._blitShader);
+
                     RenderTexture.active = null;
+
                     GL.LoadOrtho();
                     GL.Viewport(new Rect(0, 0, _instance._realRes.x, _instance._realRes.y));
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
-                        Color.black);
-                    Graphics.DrawTexture(new Rect(0, 1, 1, -1), _instance._upscaler, new Rect(0, 0, 1, 1), 0, 0, 0, 0);
-                }
-                else
-                {
-                    _instance._gameRenderTexture.filterMode = FilterMode.Bilinear;
-                    Graphics.SetRenderTarget(null);
-                    GL.LoadOrtho();
-                    GL.Viewport(new Rect(0, 0, _instance._realRes.x, _instance._realRes.y));
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), Texture2D.whiteTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0,
-                        Color.black);
+                    GL.Clear(true, true, Color.clear);
 
-                    Graphics.DrawTexture(new Rect(0, 0, 1, 1), _instance._gameRenderTexture, new Rect(0, 0, 1, 1), 0, 0,
-                        0, 0);
+                    Graphics.DrawTexture(
+                        new Rect(0, 1, 1, -1),
+                        _instance._upscaler,
+                        new Rect(0, 0, 1, 1),
+                        0, 0, 0, 0,
+                        _instance._blitShader);
                 }
-
-                /*
-                Graphics.DrawTexture(
-                    new Rect(0.0f, 0.0f, 1f, 1f),
-                    _instance._gameRenderTexture,
-                    new Rect(0, 0, 1, 1),
-                    0, 0, 0, 0);
-                    */
 
                 GL.PopMatrix();
             }
@@ -333,9 +328,9 @@ namespace Sharpener
 
         private enum RenderMode
         {
-            GameDefault,
-            NativeNearest,
-            UpDown
+            GameDefault = 0,
+            UpDown = 1,
+            NativeNearest = 2,
         }
     }
 }
