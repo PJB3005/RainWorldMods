@@ -21,6 +21,9 @@ namespace ShaderReload
         private readonly FileSystemWatcher _fsWatcher;
         private RainWorld _rainWorld;
 
+        private readonly Dictionary<FShader, FShaderReg> _shaderRegs = new();
+        private bool _enabled = true;
+
         public ShaderReloadMod()
         {
             On.RainWorld.Start += OnRainWorldOnStart;
@@ -34,6 +37,20 @@ namespace ShaderReload
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                _enabled = !_enabled;
+
+                Debug.Log(_enabled ? "SHR: ENABLING loaded shaders" : "SHR: DISABLING loaded shaders");
+
+                foreach (var (fShader, reg) in _shaderRegs)
+                {
+                    fShader.shader = _enabled ? reg.Replacement : reg.Original;
+                }
+
+                UpdateFacetLayers(_shaderRegs.Keys);
+            }
+
             ReloadShaders();
         }
 
@@ -90,7 +107,10 @@ namespace ShaderReload
             }
 
             if (replacementShaders.Count == 0)
+            {
+                Debug.Log("SHR: No shaders to actually replace, done");
                 return;
+            }
 
             Debug.Log($"SHR: {replacementShaders.Count} shaders to replace");
 
@@ -103,16 +123,36 @@ namespace ShaderReload
                     Debug.Log($"SHR: RW shader {name} needs updating (shader {fShader.shader.name})");
 
                     toUpdateShaders.Add(fShader);
-                    fShader.shader = replacement;
+
+                    if (!_shaderRegs.TryGetValue(fShader, out var reg))
+                    {
+                        reg = new FShaderReg();
+                        reg.Original = fShader.shader;
+                        _shaderRegs.Add(fShader, reg);
+                    }
+
+                    reg.Replacement = replacement;
+
+                    if (_enabled)
+                    {
+                        fShader.shader = replacement;
+                    }
                 }
             }
 
+            UpdateFacetLayers(toUpdateShaders);
+
+            Debug.Log("SHR: Done reloading shaders");
+        }
+
+        private static void UpdateFacetLayers(ICollection<FShader> shaderToUpdate)
+        {
             Debug.Log("SHR: Updating FFacetRenderLayers...");
 
             var count = 0;
             foreach (var fNode in AllFNodes())
             {
-                if (fNode is FFacetNode fFacetNode && toUpdateShaders.Contains(fFacetNode.shader))
+                if (fNode is FFacetNode fFacetNode && shaderToUpdate.Contains(fFacetNode.shader))
                 {
                     count += 1;
                     ReloadFacetRenderLayerMaterial(fFacetNode._renderLayer);
@@ -120,7 +160,6 @@ namespace ShaderReload
             }
 
             Debug.Log($"SHR: Updated {count} FFacetRenderLayers with new shaders.");
-            Debug.Log("SHR: Done reloading shaders");
         }
 
         private static void ReloadFacetRenderLayerMaterial(FFacetRenderLayer layer)
@@ -133,7 +172,7 @@ namespace ShaderReload
             layer._meshRenderer.renderer.sharedMaterial = layer._material;
         }
 
-        private IEnumerable<FNode> AllFNodes()
+        private static IEnumerable<FNode> AllFNodes()
         {
             foreach (var fStage in Futile._stages)
             {
@@ -144,7 +183,7 @@ namespace ShaderReload
             }
         }
 
-        private IEnumerable<FNode> ContainerFNodes(FContainer container)
+        private static IEnumerable<FNode> ContainerFNodes(FContainer container)
         {
             foreach (var childNode in container._childNodes)
             {
@@ -185,6 +224,12 @@ namespace ShaderReload
                 Debug.Log($"SHR: Failed to load {fName}:\n{e}");
                 return null;
             }
+        }
+
+        private sealed class FShaderReg
+        {
+            public Shader Original;
+            public Shader Replacement;
         }
     }
 }
