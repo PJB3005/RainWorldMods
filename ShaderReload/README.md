@@ -11,3 +11,12 @@ Usage instructions:
 5. Change the shader files.
 6. Select the shader file you changed in the Unity editor and click "Show all" next to "Compiled code".
 7. Unity will output the compiled shader to the `Temp` folder in the project, and the mod will automatically pick the file up and reload the in-game shaders with it.
+
+More features:
+* Press F9 to swap between built-in and loaded shaders.
+
+Technical details:
+* The first shader load happens the next `Update()` after `RainWorld.Start()`. Register custom shaders from your own mod there or something, I don't know.
+* Your `FShader`s must be registered in `RainWorld.Shaders` for the mod to swap them out. Anywhere else doesn't work.
+* Shaders are compared for equality with the Unity shader name. Filenames or dict-name in `RainWorld.Shaders` is ignored.
+
