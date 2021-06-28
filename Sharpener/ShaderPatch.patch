@@ -1,0 +1,1460 @@
+diff --git a/Additive.shader b/Additive.shader
+index 147a63d..4ab243a 100644
+--- a/Additive.shader
++++ b/Additive.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/AdditiveColor.shader b/AdditiveColor.shader
+index 6b8126b..829dcb7 100644
+--- a/AdditiveColor.shader
++++ b/AdditiveColor.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Adrenaline.shader b/Adrenaline.shader
+index 6f35377..d2166b7 100644
+--- a/Adrenaline.shader
++++ b/Adrenaline.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Background.shader b/Background.shader
+index f7c3a16..9332bdf 100644
+--- a/Background.shader
++++ b/Background.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/BkgFloor.shader b/BkgFloor.shader
+index ea0fbb8..a8282ef 100644
+--- a/BkgFloor.shader
++++ b/BkgFloor.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/BlackGoo.shader b/BlackGoo.shader
+index e4f35ca..f69ae8f 100644
+--- a/BlackGoo.shader
++++ b/BlackGoo.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Bloom.shader b/Bloom.shader
+index bfab891..8e50300 100644
+--- a/Bloom.shader
++++ b/Bloom.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/BulletRain.shader b/BulletRain.shader
+index 6892bac..117f4d8 100644
+--- a/BulletRain.shader
++++ b/BulletRain.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/CicadaWing.shader b/CicadaWing.shader
+index 43dfd0d..552683a 100644
+--- a/CicadaWing.shader
++++ b/CicadaWing.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/Cloud.shader b/Cloud.shader
+index 630abee..0d7fa74 100644
+--- a/Cloud.shader
++++ b/Cloud.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/CloudDistant.shader b/CloudDistant.shader
+index bd4ac0e..d5076e4 100644
+--- a/CloudDistant.shader
++++ b/CloudDistant.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/ColoredSprite.shader b/ColoredSprite.shader
+index 6ebfead..b68c379 100644
+--- a/ColoredSprite.shader
++++ b/ColoredSprite.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/ColoredSprite2.shader b/ColoredSprite2.shader
+index 3dddc8e..20c9c53 100644
+--- a/ColoredSprite2.shader
++++ b/ColoredSprite2.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/CoralCircuit.shader b/CoralCircuit.shader
+index ff5a82b..72f1c99 100644
+--- a/CoralCircuit.shader
++++ b/CoralCircuit.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/CoralNeuron.shader b/CoralNeuron.shader
+index 85d8831..0ef8c11 100644
+--- a/CoralNeuron.shader
++++ b/CoralNeuron.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/CustomDepth.shader b/CustomDepth.shader
+index 124e8db..5dbe363 100644
+--- a/CustomDepth.shader
++++ b/CustomDepth.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DeadCoralCircuit.shader b/DeadCoralCircuit.shader
+index 8af4388..0a2c003 100644
+--- a/DeadCoralCircuit.shader
++++ b/DeadCoralCircuit.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DeathFall.shader b/DeathFall.shader
+index 3ac4747..9c24ef3 100644
+--- a/DeathFall.shader
++++ b/DeathFall.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DeathRain.shader b/DeathRain.shader
+index 5b5d109..75e944b 100644
+--- a/DeathRain.shader
++++ b/DeathRain.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Decal.shader b/Decal.shader
+index 12c8d6d..ec9beb9 100644
+--- a/Decal.shader
++++ b/Decal.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DeepProcessing.shader b/DeepProcessing.shader
+index 5020030..7ccbc3c 100644
+--- a/DeepProcessing.shader
++++ b/DeepProcessing.shader
+@@ -42,6 +42,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DeepWater.shader b/DeepWater.shader
+index ed7302c..b6bb4ce 100644
+--- a/DeepWater.shader
++++ b/DeepWater.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/DistantBkgObject.shader b/DistantBkgObject.shader
+index 45a9fbe..3a54aee 100644
+--- a/DistantBkgObject.shader
++++ b/DistantBkgObject.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/DistantBkgObjectRepeatHorizontal.shader b/DistantBkgObjectRepeatHorizontal.shader
+index 53293aa..ca7900c 100644
+--- a/DistantBkgObjectRepeatHorizontal.shader
++++ b/DistantBkgObjectRepeatHorizontal.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Dust.shader b/Dust.shader
+index d697050..953d417 100644
+--- a/Dust.shader
++++ b/Dust.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/EdgeFade.shader b/EdgeFade.shader
+index b04b908..108535d 100644
+--- a/EdgeFade.shader
++++ b/EdgeFade.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/EelBody.shader b/EelBody.shader
+index 86b75d3..a0d31ea 100644
+--- a/EelBody.shader
++++ b/EelBody.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/EelFin.shader b/EelFin.shader
+index 017765b..45a7111 100644
+--- a/EelFin.shader
++++ b/EelFin.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/ElectricDeath.shader b/ElectricDeath.shader
+index 880e41b..e9abc14 100644
+--- a/ElectricDeath.shader
++++ b/ElectricDeath.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/FireSmoke.shader b/FireSmoke.shader
+index a1fe1b9..276883c 100644
+--- a/FireSmoke.shader
++++ b/FireSmoke.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/FlareBomb.shader b/FlareBomb.shader
+index d46a063..79aa0cf 100644
+--- a/FlareBomb.shader
++++ b/FlareBomb.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/FlatLight.shader b/FlatLight.shader
+index 8e25eec..f790ee1 100644
+--- a/FlatLight.shader
++++ b/FlatLight.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/FlatLightBehindTerrain.shader b/FlatLightBehindTerrain.shader
+index 65fbfc1..00f1b4c 100644
+--- a/FlatLightBehindTerrain.shader
++++ b/FlatLightBehindTerrain.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/FlatLightNoisy.shader b/FlatLightNoisy.shader
+index 6ecae53..668093b 100644
+--- a/FlatLightNoisy.shader
++++ b/FlatLightNoisy.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/FlatWaterLight.shader b/FlatWaterLight.shader
+index 804e672..d8e1651 100644
+--- a/FlatWaterLight.shader
++++ b/FlatWaterLight.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Fog.shader b/Fog.shader
+index 9e9d4dc..d5b9f57 100644
+--- a/Fog.shader
++++ b/Fog.shader
+@@ -45,6 +45,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GateHologram.shader b/GateHologram.shader
+index fe0caa0..bdc755c 100644
+--- a/GateHologram.shader
++++ b/GateHologram.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GhostDistortion.shader b/GhostDistortion.shader
+index 1ad9fd9..68ba5d3 100644
+--- a/GhostDistortion.shader
++++ b/GhostDistortion.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GhostSkin.shader b/GhostSkin.shader
+index 47b4c69..14257b6 100644
+--- a/GhostSkin.shader
++++ b/GhostSkin.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GlyphProjection.shader b/GlyphProjection.shader
+index 506f29c..7e095db 100644
+--- a/GlyphProjection.shader
++++ b/GlyphProjection.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GoldenGlow.shader b/GoldenGlow.shader
+index 7647663..234b177 100644
+--- a/GoldenGlow.shader
++++ b/GoldenGlow.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/GravityDisruptor.shader b/GravityDisruptor.shader
+index 7174699..20f6923 100644
+--- a/GravityDisruptor.shader
++++ b/GravityDisruptor.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HazerHaze.shader b/HazerHaze.shader
+index d41439a..e39d2a4 100644
+--- a/HazerHaze.shader
++++ b/HazerHaze.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HeatDistortion.shader b/HeatDistortion.shader
+index 5a68af7..e383328 100644
+--- a/HeatDistortion.shader
++++ b/HeatDistortion.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HoldButtonCircle.shader b/HoldButtonCircle.shader
+index a519af8..5015476 100644
+--- a/HoldButtonCircle.shader
++++ b/HoldButtonCircle.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HoloGrid.shader b/HoloGrid.shader
+index c7caa31..9200492 100644
+--- a/HoloGrid.shader
++++ b/HoloGrid.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/Hologram.shader b/Hologram.shader
+index cf1459f..bf33219 100644
+--- a/Hologram.shader
++++ b/Hologram.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HologramBehindTerrain.shader b/HologramBehindTerrain.shader
+index 3c000d5..eb91590 100644
+--- a/HologramBehindTerrain.shader
++++ b/HologramBehindTerrain.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/HologramImage.shader b/HologramImage.shader
+index 5095ee5..f4ea1c6 100644
+--- a/HologramImage.shader
++++ b/HologramImage.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/House.shader b/House.shader
+index 6737e68..d2e8600 100644
+--- a/House.shader
++++ b/House.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/JaggedCircle.shader b/JaggedCircle.shader
+index 741e1eb..fa567f7 100644
+--- a/JaggedCircle.shader
++++ b/JaggedCircle.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/JaggedSquare.shader b/JaggedSquare.shader
+index 7aa8b5f..02bba49 100644
+--- a/JaggedSquare.shader
++++ b/JaggedSquare.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/KingTusk.shader b/KingTusk.shader
+index 9e9f332..1ee0234 100644
+--- a/KingTusk.shader
++++ b/KingTusk.shader
+@@ -39,6 +39,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LevelColor.shader b/LevelColor.shader
+index 7c3f806..d92ad36 100644
+--- a/LevelColor.shader
++++ b/LevelColor.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+@@ -73,12 +74,13 @@ uniform float _fogAmount;
+ uniform float _waterLevel;
+ uniform float _Grime;
+ uniform float _SwarmRoom;
++uniform float2 _screenSize;
+ uniform float _WetTerrain;
+ uniform float _cloudsSpeed;
+ 
+ struct v2f {
+     float4  pos : SV_POSITION;
+-    float2  uv : TEXCOORD0;
++    float2 scrPos : TEXCOORD1;
+ };
+ 
+ float4 _MainTex_ST;
+@@ -87,7 +89,7 @@ v2f vert (appdata_base v)
+ {
+     v2f o;
+     o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+-    o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
++    o.scrPos = ComputeScreenPos(o.pos);
+     return o;
+ }
+ 
+@@ -98,17 +100,25 @@ half4 frag (v2f i) : COLOR
+ half4 setColor = half4(0.0, 0.0, 0.0, 1.0);
+ bool checkMaskOut = false;
+ 
+-float ugh = fmod(fmod(   tex2D(_MainTex, float2(i.uv.x, i.uv.y)).x*255   , 90)-1, 30)/300.0;
+-float displace = tex2D(_NoiseTex, float2((i.uv.x * 1.5) - ugh + (_RAIN*0.01), (i.uv.y*0.25) - ugh + _RAIN * 0.05)   ).x;
+-displace = clamp((sin((displace + i.uv.x + i.uv.y + _RAIN*0.1) * 3 * 3.14)-0.95)*20, 0, 1);
++float2 uv = float2(floor(i.scrPos.x*_screenSize.x)/_screenSize.x, floor(i.scrPos.y*_screenSize.y)/_screenSize.y);
++
++uv.x -= _spriteRect.x;
++uv.y -= _spriteRect.y;
++
++uv.x /= _spriteRect.z - _spriteRect.x;
++uv.y /= _spriteRect.w - _spriteRect.y;
++
++float ugh = fmod(fmod(   tex2D(_MainTex, uv).x*255   , 90)-1, 30)/300.0;
++float displace = tex2D(_NoiseTex, float2((uv.x * 1.5) - ugh + (_RAIN*0.01), (uv.y*0.25) - ugh + _RAIN * 0.05)   ).x;
++displace = clamp((sin((displace + uv.x + uv.y + _RAIN*0.1) * 3 * 3.14)-0.95)*20, 0, 1);
+ 
+ 
+  
+-  half2 screenPos = half2(lerp(_spriteRect.x, _spriteRect.z, i.uv.x), lerp(_spriteRect.y, _spriteRect.w, i.uv.y));
++  half2 screenPos = i.scrPos;
+   
+   if (_WetTerrain < 0.5 || 1-screenPos.y > _waterLevel) displace = 0;
+ 
+-half4 texcol = tex2D(_MainTex, float2(i.uv.x, i.uv.y+displace*0.001));
++half4 texcol = tex2D(_MainTex, float2(uv.x, uv.y+displace*0.001));
+ 
+ 
+ 
+@@ -139,9 +149,9 @@ half4 texcol = tex2D(_MainTex, float2(i.uv.x, i.uv.y+displace*0.001));
+    effectCol = green;
+ 
+    
+-   half shadow = tex2D(_NoiseTex, float2((i.uv.x*0.5) + (_RAIN*0.1*_cloudsSpeed) - (0.003*fmod(red, 30.0)), 1-(i.uv.y*0.5) + (_RAIN*0.2*_cloudsSpeed) - (0.003*fmod(red, 30.0)))).x;
++   half shadow = tex2D(_NoiseTex, float2((uv.x*0.5) + (_RAIN*0.1*_cloudsSpeed) - (0.003*fmod(red, 30.0)), 1-(uv.y*0.5) + (_RAIN*0.2*_cloudsSpeed) - (0.003*fmod(red, 30.0)))).x;
+  
+-   shadow = 0.5 + sin(fmod(shadow+(_RAIN*0.1*_cloudsSpeed)-i.uv.y, 1)*3.14*2)*0.5;
++   shadow = 0.5 + sin(fmod(shadow+(_RAIN*0.1*_cloudsSpeed)-uv.y, 1)*3.14*2)*0.5;
+    shadow = clamp(((shadow - 0.5)*6)+0.5-(_light*4), 0,1);
+ 
+    if (red > 90)
+@@ -170,7 +180,7 @@ half4 texcol = tex2D(_MainTex, float2(i.uv.x, i.uv.y+displace*0.001));
+     setColor = lerp(tex2D(_PalTex, float2((red*notFloorDark)/32.0, (paletteColor + 3 + 0.5)/8.0)), tex2D(_PalTex, float2((red*notFloorDark)/32.0, (paletteColor + 0.5)/8.0)), shadow);
+ 
+ 
+-	half rbcol = (sin((_RAIN + (tex2D(_NoiseTex, float2(i.uv.x*2, i.uv.y*2) ).x * 4) + red/12.0) * 3.14 * 2)*0.5)+0.5;
++	half rbcol = (sin((_RAIN + (tex2D(_NoiseTex, float2(uv.x*2, uv.y*2) ).x * 4) + red/12.0) * 3.14 * 2)*0.5)+0.5;
+   	setColor = lerp(setColor, tex2D(_PalTex, float2((5.5 + rbcol*25)/32.0, 6.5 / 8.0) ), (green >= 4 ? 0.2 : 0.0) * _Grime);
+    
+ 
+diff --git a/LevelColorDark.shader b/LevelColorDark.shader
+index db9d71a..4fb64ce 100644
+--- a/LevelColorDark.shader
++++ b/LevelColorDark.shader
+@@ -48,6 +48,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/LevelColorDebug.shader b/LevelColorDebug.shader
+index 3b82579..c7592b5 100644
+--- a/LevelColorDebug.shader
++++ b/LevelColorDebug.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/LevelColorDebug2.shader b/LevelColorDebug2.shader
+index ca87bb2..710ddd8 100644
+--- a/LevelColorDebug2.shader
++++ b/LevelColorDebug2.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/LevelMelt.shader b/LevelMelt.shader
+index 6be34f4..a35761d 100644
+--- a/LevelMelt.shader
++++ b/LevelMelt.shader
+@@ -51,6 +51,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+ 
+diff --git a/LevelMelt2.shader b/LevelMelt2.shader
+index ecd68fa..5c36a0e 100644
+--- a/LevelMelt2.shader
++++ b/LevelMelt2.shader
+@@ -39,6 +39,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LightAndSkyBloom.shader b/LightAndSkyBloom.shader
+index de00c43..2ad0ee2 100644
+--- a/LightAndSkyBloom.shader
++++ b/LightAndSkyBloom.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LightBeam.shader b/LightBeam.shader
+index c3fdf24..b52f4ff 100644
+--- a/LightBeam.shader
++++ b/LightBeam.shader
+@@ -45,6 +45,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LightBloom.shader b/LightBloom.shader
+index 4151a85..b7f613f 100644
+--- a/LightBloom.shader
++++ b/LightBloom.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LightSource.shader b/LightSource.shader
+index f18e8b2..465968c 100644
+--- a/LightSource.shader
++++ b/LightSource.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LizardAntenna.shader b/LizardAntenna.shader
+index 989c92a..b04dd18 100644
+--- a/LizardAntenna.shader
++++ b/LizardAntenna.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LizardLaser.shader b/LizardLaser.shader
+index cc86cae..df3478c 100644
+--- a/LizardLaser.shader
++++ b/LizardLaser.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/LocalBloom.shader b/LocalBloom.shader
+index 8f40983..5ec1ad5 100644
+--- a/LocalBloom.shader
++++ b/LocalBloom.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Map.shader b/Map.shader
+index 9072a6e..a94fea2 100644
+--- a/Map.shader
++++ b/Map.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/MapAerial.shader b/MapAerial.shader
+index 81c66c6..2ccebff 100644
+--- a/MapAerial.shader
++++ b/MapAerial.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/MapShortcut.shader b/MapShortcut.shader
+index b0d340f..2b271b0 100644
+--- a/MapShortcut.shader
++++ b/MapShortcut.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/MenuText.shader b/MenuText.shader
+index 51a2141..4c94723 100644
+--- a/MenuText.shader
++++ b/MenuText.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/NewVultureSmoke.shader b/NewVultureSmoke.shader
+index f97f6aa..713c2cb 100644
+--- a/NewVultureSmoke.shader
++++ b/NewVultureSmoke.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/OutPostAntler.shader b/OutPostAntler.shader
+index 763148b..7807652 100644
+--- a/OutPostAntler.shader
++++ b/OutPostAntler.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/OverseerZip.shader b/OverseerZip.shader
+index ff29293..ee55753 100644
+--- a/OverseerZip.shader
++++ b/OverseerZip.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Projection.shader b/Projection.shader
+index 888f3a2..9a12bfa 100644
+--- a/Projection.shader
++++ b/Projection.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Rainbow.shader b/Rainbow.shader
+index 6cb89ed..0f70fda 100644
+--- a/Rainbow.shader
++++ b/Rainbow.shader
+@@ -45,6 +45,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/RedsIllness.shader b/RedsIllness.shader
+index 8f0e8d2..f4781c3 100644
+--- a/RedsIllness.shader
++++ b/RedsIllness.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/RoomTransition.shader b/RoomTransition.shader
+index bd71c94..0735f94 100644
+--- a/RoomTransition.shader
++++ b/RoomTransition.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneBlur.shader b/SceneBlur.shader
+index 8b4c3f7..f05adf2 100644
+--- a/SceneBlur.shader
++++ b/SceneBlur.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneBlurLightEdges.shader b/SceneBlurLightEdges.shader
+index 8a8d084..9d97434 100644
+--- a/SceneBlurLightEdges.shader
++++ b/SceneBlurLightEdges.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneFisheye.shader b/SceneFisheye.shader
+index 408ff79..ff11af7 100644
+--- a/SceneFisheye.shader
++++ b/SceneFisheye.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneLighten.shader b/SceneLighten.shader
+index 4ac713e..2801032 100644
+--- a/SceneLighten.shader
++++ b/SceneLighten.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneOverlay.shader b/SceneOverlay.shader
+index 5f41f2d..9e747cc 100644
+--- a/SceneOverlay.shader
++++ b/SceneOverlay.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneRain.shader b/SceneRain.shader
+index 7b3c7b9..9f06018 100644
+--- a/SceneRain.shader
++++ b/SceneRain.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SceneSoftLight.shader b/SceneSoftLight.shader
+index a4b4ebc..4f366f0 100644
+--- a/SceneSoftLight.shader
++++ b/SceneSoftLight.shader
+@@ -46,6 +46,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/ShockWave.shader b/ShockWave.shader
+index 32236fa..0fefb68 100644
+--- a/ShockWave.shader
++++ b/ShockWave.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/ShortCut0.shader b/ShortCut0.shader
+index 60bc7f9..cec11c5 100644
+--- a/ShortCut0.shader
++++ b/ShortCut0.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SingleGlyph.shader b/SingleGlyph.shader
+index 33ce4ee..8248df8 100644
+--- a/SingleGlyph.shader
++++ b/SingleGlyph.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SkyBloom.shader b/SkyBloom.shader
+index 08b836f..1137da2 100644
+--- a/SkyBloom.shader
++++ b/SkyBloom.shader
+@@ -45,6 +45,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Smoke.shader b/Smoke.shader
+index 76cb90b..9be4c12 100644
+--- a/Smoke.shader
++++ b/Smoke.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SmokeTrail.shader b/SmokeTrail.shader
+index 0a461a8..05f863a 100644
+--- a/SmokeTrail.shader
++++ b/SmokeTrail.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SolidColored.shader b/SolidColored.shader
+index b89d0dd..7969b8e 100644
+--- a/SolidColored.shader
++++ b/SolidColored.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/SootMark.shader b/SootMark.shader
+index 63eeb0f..9ffa84f 100644
+--- a/SootMark.shader
++++ b/SootMark.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SpecificDepth.shader b/SpecificDepth.shader
+index 938d719..0b0a070 100644
+--- a/SpecificDepth.shader
++++ b/SpecificDepth.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Spores.shader b/Spores.shader
+index a4acfe5..2dc9eb0 100644
+--- a/Spores.shader
++++ b/Spores.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/Steam.shader b/Steam.shader
+index ff9d6f3..8b19be6 100644
+--- a/Steam.shader
++++ b/Steam.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/TentaclePlant.shader b/TentaclePlant.shader
+index 49160a6..7df75cb 100644
+--- a/TentaclePlant.shader
++++ b/TentaclePlant.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/TubeWorm.shader b/TubeWorm.shader
+index dd325fd..93583ed 100644
+--- a/TubeWorm.shader
++++ b/TubeWorm.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/UnderWaterLight.shader b/UnderWaterLight.shader
+index 29f5d45..1dac6c7 100644
+--- a/UnderWaterLight.shader
++++ b/UnderWaterLight.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VectorCircle.shader b/VectorCircle.shader
+index 832d0ea..48e74f3 100644
+--- a/VectorCircle.shader
++++ b/VectorCircle.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VectorCircleFadable.shader b/VectorCircleFadable.shader
+index 848b877..77f6849 100644
+--- a/VectorCircleFadable.shader
++++ b/VectorCircleFadable.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VoidCeiling.shader b/VoidCeiling.shader
+index b21daed..329e8f1 100644
+--- a/VoidCeiling.shader
++++ b/VoidCeiling.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VoidSpawnBody.shader b/VoidSpawnBody.shader
+index 63f1648..49b78df 100644
+--- a/VoidSpawnBody.shader
++++ b/VoidSpawnBody.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VoidWormBody.shader b/VoidWormBody.shader
+index ebba730..0982dcd 100644
+--- a/VoidWormBody.shader
++++ b/VoidWormBody.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VoidWormFin.shader b/VoidWormFin.shader
+index 71f3369..81d6286 100644
+--- a/VoidWormFin.shader
++++ b/VoidWormFin.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/VoidWormPincher.shader b/VoidWormPincher.shader
+index cb0c30b..2648409 100644
+--- a/VoidWormPincher.shader
++++ b/VoidWormPincher.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/WaterFall.shader b/WaterFall.shader
+index 4931984..fea80a9 100644
+--- a/WaterFall.shader
++++ b/WaterFall.shader
+@@ -41,6 +41,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ sampler2D _MainTex;
+ sampler2D _LevelTex;
+diff --git a/WaterLight.shader b/WaterLight.shader
+index a90bedf..25101cc 100644
+--- a/WaterLight.shader
++++ b/WaterLight.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/WaterNut.shader b/WaterNut.shader
+index dec8d80..9ea24c7 100644
+--- a/WaterNut.shader
++++ b/WaterNut.shader
+@@ -44,6 +44,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/WaterSplash.shader b/WaterSplash.shader
+index 87ad15f..1ac61a2 100644
+--- a/WaterSplash.shader
++++ b/WaterSplash.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/WaterSurface.shader b/WaterSurface.shader
+index 9b00da7..3d4f23c 100644
+--- a/WaterSurface.shader
++++ b/WaterSurface.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/WormLayerFade.shader b/WormLayerFade.shader
+index 1ecaaf5..ff9f093 100644
+--- a/WormLayerFade.shader
++++ b/WormLayerFade.shader
+@@ -39,6 +39,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/_ShaderFix.cginc b/_ShaderFix.cginc
+new file mode 100644
+index 0000000..f552824
+--- /dev/null
++++ b/_ShaderFix.cginc
+@@ -0,0 +1,22 @@
++// When rendering to a RenderTexture, Unity tries to flip the projection matrix so everything renders upside down.
++// This is really bad, because none of the shaders in rain world are coded to handle this.
++// So, we tell Unity to get lost and override ComputeScreenPos() so that it ignores the "flip the Y dir" thing.
++// To go along with us changing the projection matrix.
++
++#define ComputeScreenPos(p) _ComputeScreenPos(p)
++
++inline float4 _ComputeScreenPos (float4 pos) {
++	float4 o = pos * 0.5f;
++	#if defined(UNITY_HALF_TEXEL_OFFSET)
++	o.xy += o.w * _ScreenParams.zw;
++	#else
++	o.xy += o.w;
++	#endif
++	
++	#if defined(SHADER_API_FLASH)
++	o.xy *= unity_NPOTScale.xy;
++	#endif
++	
++	o.zw = pos.zw;
++	return o;
++}
+\ No newline at end of file
+diff --git a/AdditiveColor - Copy.shader b/~AdditiveColor - Copy.shader
+similarity index 100%
+rename from AdditiveColor - Copy.shader
+rename to ~AdditiveColor - Copy.shader
+diff --git a/OldDeathRain.shader b/~OldDeathRain.shader
+similarity index 98%
+rename from OldDeathRain.shader
+rename to ~OldDeathRain.shader
+index 72ef889..501bdb7 100644
+--- a/OldDeathRain.shader
++++ b/~OldDeathRain.shader
+@@ -43,6 +43,7 @@ CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #include "UnityCG.cginc"
++#include "_ShaderFix.cginc"
+ 
+ //#pragma profileoption NumTemps=64
+ //#pragma profileoption NumInstructionSlots=2048
+diff --git a/SolidColored - Copy.shader b/~SolidColored - Copy.shader
+similarity index 100%
+rename from SolidColored - Copy.shader
+rename to ~SolidColored - Copy.shader
