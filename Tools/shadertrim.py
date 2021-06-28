@@ -24,11 +24,9 @@ def main():
 
     inputStr = open(args.input, "r").read()
 
-    new = SUBPROG_RE.sub(SUBPROG_RE, "", inputStr)
+    new = SUBPROG_RE.sub("", inputStr)
 
-    gzipped = gzip.compress(new.encode())
-
-    open(args.output, "w").write(gzipped)
+    open(args.output, "w").write(new)
 
 if __name__ == "__main__":
     main()
