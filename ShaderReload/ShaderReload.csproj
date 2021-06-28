@@ -29,4 +29,7 @@
       <HintPath>..\Assemblies\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../Shared/Shared.cs" />
+  </ItemGroup>
  </Project>
