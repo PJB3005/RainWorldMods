@@ -1,4 +1,4 @@
-// Compiled shader for all platforms, uncompressed size: 26.7KB
+// Compiled shader for all platforms, uncompressed size: 27.2KB
 
 Shader "Futile/HeatDistortion" {
 Properties {
@@ -20,9 +20,9 @@ SubShader {
  //      opengl : 9 math
  // Stats for Fragment shader:
  //       d3d11 : 44 math, 3 texture
- //        d3d9 : 86 math, 3 texture
+ //        d3d9 : 88 math, 3 texture
  //       metal : 54 math, 3 texture
- //      opengl : 63 math, 3 texture
+ //      opengl : 65 math, 3 texture
  Pass {
   Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
   BindChannels {
@@ -95,9 +95,10 @@ ConstBuffer "$Globals" 80
 Vector 16 [_screenSize] 2
 Vector 32 [_spriteRect]
 Float 48 [_RAIN]
+Vector 52 [_realRenderScreenSize] 2
 BindCB  "$Globals" 0
 "ps_4_0
-eefiecedladmfcpieinclhlilkglijicpaephaolabaaaaaaemahaaaaadaaaaaa
+eefiecedpaiimpfpgflfljlpbodpngkjihhlmahoabaaaaaaemahaaaaadaaaaaa
 cmaaaaaaliaaaaaaomaaaaaaejfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaheaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -143,18 +144,18 @@ ecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaagaeabjaaaaafecaabaaa
 aaaaaaaackaabaaaaaaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
 dkbabaaaacaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaa
 aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaackaabaaaaaaaaaaa
-ckbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
-aaaaaaaaabaaaaaaebaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaah
+ckbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaabkiacaaa
+aaaaaaaaadaaaaaaebaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaaadpaoaaaaaibcaabaaa
-abaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaaabaaaaaaaoaaaaajbcaabaaa
+abaaaaaaakaabaaaaaaaaaaabkiacaaaaaaaaaaaadaaaaaaaoaaaaajbcaabaaa
 aaaaaaaabkiacaaaaaaaaaaaabaaaaaaakiacaaaaaaaaaaaabaaaaaaaoaaaaah
 bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaiccaabaaa
 aaaaaaaadkbabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkiacaaaaaaaaaaaabaaaaaaebaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaackiacaaaaaaaaaaaadaaaaaaebaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-aaaaaadpaoaaaaaiccaabaaaabaaaaaaakaabaaaaaaaaaaabkiacaaaaaaaaaaa
-abaaaaaaefaaaaajpccabaaaaaaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaa
+aaaaaadpaoaaaaaiccaabaaaabaaaaaaakaabaaaaaaaaaaackiacaaaaaaaaaaa
+adaaaaaaefaaaaajpccabaaaaaaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaa
 aagabaaaaaaaaaaadoaaaaab"
 }
 

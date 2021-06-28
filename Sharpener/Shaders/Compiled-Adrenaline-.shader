@@ -1,4 +1,4 @@
-// Compiled shader for all platforms, uncompressed size: 18.7KB
+// Compiled shader for all platforms, uncompressed size: 18.9KB
 
 Shader "Futile/Adrenaline" {
 Properties {
@@ -91,7 +91,7 @@ SubProgram "d3d11 " {
 // Stats: 26 math, 1 textures
 SetTexture 0 [_GrabTexture] 2D 0
 ConstBuffer "$Globals" 48
-Vector 16 [_screenSize] 2
+Vector 16 [_realRenderScreenSize] 2
 BindCB  "$Globals" 0
 "ps_4_0
 eefiecedoeicpngccmpkofmkackchfihbphpghgcabaaaaaalmaeaaaaadaaaaaa

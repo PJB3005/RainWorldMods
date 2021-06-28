@@ -1,4 +1,4 @@
-// Compiled shader for all platforms, uncompressed size: 33.5KB
+// Compiled shader for all platforms, uncompressed size: 33.9KB
 
 Shader "Futile/GhostDistortion" {
 Properties {
@@ -20,9 +20,9 @@ SubShader {
  //      opengl : 9 math
  // Stats for Fragment shader:
  //       d3d11 : 63 math, 2 texture, 1 branch
- //        d3d9 : 120 math, 5 texture
+ //        d3d9 : 122 math, 5 texture
  //       metal : 87 math, 5 texture, 1 branch
- //      opengl : 81 math, 5 texture
+ //      opengl : 83 math, 5 texture
  Pass {
   Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
   BindChannels {
@@ -93,11 +93,12 @@ SetTexture 0 [_NoiseTex2] 2D 1
 SetTexture 1 [_GrabTexture] 2D 0
 ConstBuffer "$Globals" 80
 Vector 16 [_screenSize] 2
+Vector 24 [_realRenderScreenSize] 2
 Vector 32 [_spriteRect]
 Float 48 [_RAIN]
 BindCB  "$Globals" 0
 "ps_4_0
-eefiecedagglfgahlaocnmpniffifemncoaaicfkabaaaaaaomajaaaaadaaaaaa
+eefiecedbojhcpfddcdagiilfpapcommilmnapobabaaaaaaomajaaaaadaaaaaa
 cmaaaaaaliaaaaaaomaaaaaaejfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaheaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -166,9 +167,9 @@ aaaaaaaaaaaaaaaadcaaaaakecaabaaaaaaaaaaabkaabaaaabaaaaaaabeaaaaa
 aaaakaebbkaabaiaebaaaaaaacaaaaaaenaaaaagecaabaaaaaaaaaaaaanaaaaa
 ckaabaaaaaaaaaaadcaaaaajdcaabaaaaaaaaaaaegaabaaaaaaaaaaakgakbaaa
 aaaaaaaaigaabaaaabaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaa
-egiacaaaaaaaaaaaabaaaaaaebaaaaafdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+ogikcaaaaaaaaaaaabaaaaaaebaaaaafdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
 aaaaaaakdcaabaaaaaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaaaaaaaaaoaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaaaaaaaaaaoaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaogikcaaa
 aaaaaaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
 abaaaaaaaagabaaaaaaaaaaadeaaaaakhcaabaaaacaaaaaaegacbaaaaaaaaaaa
 aceaaaaaifieieloieidaddpmmmleldpaaaaaaaaaaaaaaaibcaabaaaabaaaaaa

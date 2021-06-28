@@ -1,4 +1,4 @@
-// Compiled shader for all platforms, uncompressed size: 20.2KB
+// Compiled shader for all platforms, uncompressed size: 20.7KB
 
 Shader "Futile/VoidSpawnBody" {
 Properties {
@@ -20,9 +20,9 @@ SubShader {
  //      opengl : 9 math
  // Stats for Fragment shader:
  //       d3d11 : 20 math, 2 texture
- //        d3d9 : 42 math, 2 texture
+ //        d3d9 : 44 math, 2 texture
  //       metal : 30 math, 2 texture
- //      opengl : 40 math, 2 texture
+ //      opengl : 42 math, 2 texture
  Pass {
   Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
   BindChannels {
@@ -95,9 +95,10 @@ ConstBuffer "$Globals" 80
 Vector 16 [_screenSize] 2
 Vector 32 [_spriteRect]
 Float 52 [_RAIN]
+Vector 56 [_realRenderScreenSize] 2
 BindCB  "$Globals" 0
 "ps_4_0
-eefiecedjhkmmdnlghlpkckhkeidinamcpilfclcabaaaaaajiaeaaaaadaaaaaa
+eefiecediglapohhijeembpbfakacdhmbhaelhfoabaaaaaajiaeaaaaadaaaaaa
 cmaaaaaaliaaaaaaomaaaaaaejfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadaaaaaaheaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -124,10 +125,10 @@ acaaaaaadcaaaaapmcaabaaaaaaaaaaakgbobaaaabaaaaaaaceaaaaaaaaaaaaa
 aaaaaaaaaaaaiadpaaaaialpaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadp
 dcaaaaamdcaabaaaaaaaaaaaegaabaaaaaaaaaaaaceaaaaagpbcaddmgpbcaddm
 aaaaaaaaaaaaaaaaogakbaaaaaaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
-aaaaaaaaegiacaaaaaaaaaaaabaaaaaaebaaaaafdcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaogikcaaaaaaaaaaaadaaaaaaebaaaaafdcaabaaaaaaaaaaaegaabaaa
 aaaaaaaaaaaaaaakdcaabaaaaaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaaadp
 aaaaaadpaaaaaaaaaaaaaaaaaoaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaa
-egiacaaaaaaaaaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+ogikcaaaaaaaaaaaadaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaa
 eghobaaaabaaaaaaaagabaaaaaaaaaaaaaaaaaahicaabaaaaaaaaaaaakbabaaa
 acaaaaaaabeaaaaaaaaaiadpdcaaaaanhcaabaaaabaaaaaapgapbaaaaaaaaaaa
 aceaaaaailgmahdpeioblkdohpgkdmdoaaaaaaaaegacbaiaebaaaaaaaaaaaaaa

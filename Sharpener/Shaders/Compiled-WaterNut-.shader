@@ -1,4 +1,4 @@
-// Compiled shader for all platforms, uncompressed size: 31.6KB
+// Compiled shader for all platforms, uncompressed size: 32.1KB
 
 Shader "Futile/WaterNut" {
 Properties {
@@ -20,9 +20,9 @@ SubShader {
  //      opengl : 9 math
  // Stats for Fragment shader:
  //       d3d11 : 45 math, 2 texture, 4 branch
- //        d3d9 : 103 math, 2 texture, 2 branch
+ //        d3d9 : 104 math, 2 texture, 2 branch
  //       metal : 65 math, 2 texture, 6 branch
- //      opengl : 91 math, 2 texture
+ //      opengl : 93 math, 2 texture
  Pass {
   Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
   BindChannels {
@@ -94,9 +94,10 @@ SetTexture 1 [_GrabTexture] 2D 0
 ConstBuffer "$Globals" 80
 Vector 16 [_screenSize] 2
 Vector 32 [_spriteRect]
+Vector 52 [_realRenderScreenSize] 2
 BindCB  "$Globals" 0
 "ps_4_0
-eefiecedgdkppndggliciagbjnacadklcmplepjeabaaaaaaheaiaaaaadaaaaaa
+eefiecedlnckggleniaedpdgghemdmmffmiadbnnabaaaaaaheaiaaaaadaaaaaa
 cmaaaaaaliaaaaaaomaaaaaaejfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaheaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -104,7 +105,7 @@ amamaaaahnaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaapapaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaedepemepfcaaklepfdeheocmaaaaaa
 abaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaa
 fdfgfpfegbhcghgfheaaklklfdeieefciaahaaaaeaaaaaaaoaabaaaafjaaaaae
-egiocaaaaaaaaaaaadaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaa
+egiocaaaaaaaaaaaaeaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaa
 abaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
 ffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadmcbabaaaabaaaaaagcbaaaad
 pcbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaadiaaaaai
@@ -139,11 +140,11 @@ abaaaaaaabeaaaaaniapmjeaenaaaaagicaabaaaaaaaaaaaaanaaaaadkaabaaa
 aaaaaaaadcaaaaapgcaabaaaabaaaaaakgblbaaaabaaaaaaaceaaaaaaaaaaaaa
 aaaaiadpaaaaialpaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaaaaa
 dcaaaaakgcaabaaaaaaaaaaafgagbaiaebaaaaaaaaaaaaaapgapbaaaaaaaaaaa
-fgagbaaaabaaaaaadiaaaaaigcaabaaaaaaaaaaafgagbaaaaaaaaaaaagibcaaa
-aaaaaaaaabaaaaaaebaaaaafgcaabaaaaaaaaaaafgagbaaaaaaaaaaaaaaaaaak
+fgagbaaaabaaaaaadiaaaaaigcaabaaaaaaaaaaafgagbaaaaaaaaaaafgigcaaa
+aaaaaaaaadaaaaaaebaaaaafgcaabaaaaaaaaaaafgagbaaaaaaaaaaaaaaaaaak
 gcaabaaaaaaaaaaafgagbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaaigcaabaaaaaaaaaaafgagbaaaaaaaaaaaagibcaaaaaaaaaaa
-abaaaaaaefaaaaajpcaabaaaacaaaaaajgafbaaaaaaaaaaaeghobaaaabaaaaaa
+aaaaaaaaaoaaaaaigcaabaaaaaaaaaaafgagbaaaaaaaaaaafgigcaaaaaaaaaaa
+adaaaaaaefaaaaajpcaabaaaacaaaaaajgafbaaaaaaaaaaaeghobaaaabaaaaaa
 aagabaaaaaaaaaaabpaaaeadakaabaaaaaaaaaaadgaaaaaipccabaaaaaaaaaaa
 aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadoaaaaabbfaaaaabbnaaaaah
 bcaabaaaaaaaaaaaabeaaaaaaaaaaaaaakaabaaaabaaaaaabpaaaeadakaabaaa

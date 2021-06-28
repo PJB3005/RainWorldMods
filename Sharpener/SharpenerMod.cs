@@ -226,6 +226,9 @@ Shader ""Tutorial/Basic"" {
                 Debug.Log($"Sharpener: new screen resolution: {_realRes}");
             }
 
+            Shader.SetGlobalVector("_realRenderScreenSize",
+                (_mode == RenderMode.NativeNearest ? _fullscreenRes : _gameRes).ToVector2());
+
             UIUpdate();
         }
 
