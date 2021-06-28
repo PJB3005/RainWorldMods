@@ -23,7 +23,7 @@ index 6b8126b..829dcb7 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/Adrenaline.shader b/Adrenaline.shader
-index 6f35377..d2166b7 100644
+index 6f35377..f8210b2 100644
 --- a/Adrenaline.shader
 +++ b/Adrenaline.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -34,6 +34,26 @@ index 6f35377..d2166b7 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -52,7 +53,7 @@ CGPROGRAM
+ 
+ 
+ sampler2D _GrabTexture : register(s0);
+-uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ 
+ 
+ struct v2f {
+@@ -94,8 +95,8 @@ half4 frag (v2f i) : COLOR
+      
+      
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) - (dir * diff);// * i.clr.w);
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+  // half4 texcol = tex2D(_LevelTex, textCoord);
+ 
 diff --git a/Background.shader b/Background.shader
 index f7c3a16..9332bdf 100644
 --- a/Background.shader
@@ -443,7 +463,7 @@ index fe0caa0..bdc755c 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/GhostDistortion.shader b/GhostDistortion.shader
-index 1ad9fd9..68ba5d3 100644
+index 1ad9fd9..f1b76fb 100644
 --- a/GhostDistortion.shader
 +++ b/GhostDistortion.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -454,6 +474,25 @@ index 1ad9fd9..68ba5d3 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -54,6 +55,7 @@ CGPROGRAM
+ sampler2D _GrabTexture : register(s0);
+ sampler2D _NoiseTex2;
+ uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ uniform float4 _spriteRect;
+ uniform float _RAIN;
+ 
+@@ -107,8 +109,8 @@ textCoord.y /= _spriteRect.w - _spriteRect.y;
+      
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) + dir *0.01 * h * clamp(sin(dist*3.142), 0, 1) * i.clr.w;
+      grabPos += dir *0.04 * effect * sin(dist*20.0-_RAIN*13.1);
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+      
+      
+      half4 grabCol = tex2D(_GrabTexture, grabPos);
 diff --git a/GhostSkin.shader b/GhostSkin.shader
 index 47b4c69..14257b6 100644
 --- a/GhostSkin.shader
@@ -479,7 +518,7 @@ index 506f29c..7e095db 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/GoldenGlow.shader b/GoldenGlow.shader
-index 7647663..234b177 100644
+index 7647663..c80a449 100644
 --- a/GoldenGlow.shader
 +++ b/GoldenGlow.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -490,8 +529,27 @@ index 7647663..234b177 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -56,6 +57,7 @@ sampler2D _NoiseTex2;
+ uniform float2 _screenSize;
+ uniform float4 _spriteRect;
+ uniform float _RAIN;
++uniform float2 _realRenderScreenSize;
+ 
+ 
+ struct v2f {
+@@ -107,8 +109,8 @@ textCoord.y /= _spriteRect.w - _spriteRect.y;
+      
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y);// + dir *0.01 * h * clamp(sin(dist*3.142), 0, 1) * i.clr.w;
+    //  grabPos += dir *0.04 * effect * sin(dist*20.0-_RAIN*13.1);
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+      
+      
+      half4 grabCol = tex2D(_GrabTexture, grabPos);
 diff --git a/GravityDisruptor.shader b/GravityDisruptor.shader
-index 7174699..20f6923 100644
+index 7174699..d8baddb 100644
 --- a/GravityDisruptor.shader
 +++ b/GravityDisruptor.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -502,6 +560,26 @@ index 7174699..20f6923 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -52,7 +53,7 @@ CGPROGRAM
+ 
+ 
+ sampler2D _GrabTexture : register(s0);
+-uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ uniform float _RAIN;
+ 
+ struct v2f {
+@@ -89,8 +90,8 @@ half4 frag (v2f i) : COLOR
+      dir = half2(-dir.y, dir.x);
+      
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) + dir *0.05 * effect * sin(dist*20.0-_RAIN*3.1) * i.clr.w;
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+ return tex2D(_GrabTexture, grabPos);
+ //return lerp(tex2D(_GrabTexture, grabPos), half4(1,0,0,1), effect);
 diff --git a/HazerHaze.shader b/HazerHaze.shader
 index d41439a..e39d2a4 100644
 --- a/HazerHaze.shader
@@ -515,7 +593,7 @@ index d41439a..e39d2a4 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/HeatDistortion.shader b/HeatDistortion.shader
-index 5a68af7..e383328 100644
+index 5a68af7..d6b288a 100644
 --- a/HeatDistortion.shader
 +++ b/HeatDistortion.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -526,6 +604,25 @@ index 5a68af7..e383328 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -56,6 +57,7 @@ sampler2D _NoiseTex;
+ uniform float2 _screenSize;
+ uniform float4 _spriteRect;
+ uniform float _RAIN;
++uniform float2 _realRenderScreenSize;
+ 
+ struct v2f {
+     float4  pos : SV_POSITION;
+@@ -111,8 +113,8 @@ half4 frag (v2f i) : COLOR
+ 	grabPos.x += distort.x;
+ 	grabPos.y += distort.y;
+ 	
+-	grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-    grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++	grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++    grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 	
+ 	half4 grabCol = tex2D(_GrabTexture, grabPos);
+ 
 diff --git a/HoldButtonCircle.shader b/HoldButtonCircle.shader
 index a519af8..5015476 100644
 --- a/HoldButtonCircle.shader
@@ -771,7 +868,7 @@ index 6be34f4..a35761d 100644
  //#pragma profileoption NumInstructionSlots=2048
  
 diff --git a/LevelMelt2.shader b/LevelMelt2.shader
-index ecd68fa..5c36a0e 100644
+index ecd68fa..704e6e1 100644
 --- a/LevelMelt2.shader
 +++ b/LevelMelt2.shader
 @@ -39,6 +39,7 @@ CGPROGRAM
@@ -782,6 +879,36 @@ index ecd68fa..5c36a0e 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -57,6 +58,7 @@ uniform float _RAIN;
+ 
+ uniform float4 _spriteRect;
+ uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ 
+ 
+ struct v2f {
+@@ -97,8 +99,8 @@ half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y);
+    // effectCol = 1 - effectCol;
+     
+     grabPos.y += lerp(-lerp(0.01, 0.001, i.clr.x), lerp(0.01, 0.001, i.clr.x), effectCol)*i.clr.w;
+-    grabPos.x = (floor(grabPos.x * 1366)+0.5)/1366.0;
+-    grabPos.y = (floor(grabPos.y * 768)+0.5)/768.0;
++    grabPos.x = (floor(grabPos.x * _realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++    grabPos.y = (floor(grabPos.y * _realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+ half4 grabCol = tex2D(_GrabTexture, float2(grabPos.x, grabPos.y));
+ 
+@@ -106,8 +108,8 @@ half4 grabCol = tex2D(_GrabTexture, float2(grabPos.x, grabPos.y));
+ 
+   for (int j = 1; j < 4; j++) {
+    grabPos.y -= lerp(-lerp(0.05, 0.01, i.clr.x), lerp(0.05, 0.01, i.clr.x), effectCol*j)*i.clr.w*(j % 2 == 1 ? -1 : 1);
+-   grabPos.x = (floor(grabPos.x * 1366)+0.5)/1366.0;
+-   grabPos.y = (floor(grabPos.y * 768)+0.5)/768.0;
++   grabPos.x = (floor(grabPos.x * _realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++   grabPos.y = (floor(grabPos.y * _realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+    grabCol += lerp(grabCol, tex2D(_GrabTexture, float2(grabPos.x, grabPos.y)), 0.5);
+    }
 diff --git a/LightAndSkyBloom.shader b/LightAndSkyBloom.shader
 index de00c43..2ad0ee2 100644
 --- a/LightAndSkyBloom.shader
@@ -975,7 +1102,7 @@ index 6cb89ed..0f70fda 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/RedsIllness.shader b/RedsIllness.shader
-index 8f0e8d2..f4781c3 100644
+index 8f0e8d2..c8ca15e 100644
 --- a/RedsIllness.shader
 +++ b/RedsIllness.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -986,6 +1113,26 @@ index 8f0e8d2..f4781c3 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -52,7 +53,7 @@ CGPROGRAM
+ 
+ 
+ sampler2D _GrabTexture : register(s0);
+-uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ 
+ struct v2f {
+     float4  pos : SV_POSITION;
+@@ -82,8 +83,8 @@ half2 dir = normalize(i.uv - half2(0.5, 0.5));
+      
+ half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) - (dir * pow(sin(pow(clamp(1-dist*2, 0, 1), 4)*3.14), 10.0)*0.045 * i.clr.x) + dir*pow(dist, 6)*1335 * i.clr.x;
+      
+-grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+ half4 grabColor = tex2D(_GrabTexture, grabPos);
+ grabColor.w = 1;
 diff --git a/RoomTransition.shader b/RoomTransition.shader
 index bd71c94..0735f94 100644
 --- a/RoomTransition.shader
@@ -1083,7 +1230,7 @@ index a4b4ebc..4f366f0 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/ShockWave.shader b/ShockWave.shader
-index 32236fa..0fefb68 100644
+index 32236fa..2d8edad 100644
 --- a/ShockWave.shader
 +++ b/ShockWave.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -1094,6 +1241,26 @@ index 32236fa..0fefb68 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -52,7 +53,7 @@ CGPROGRAM
+ 
+ 
+ sampler2D _GrabTexture : register(s0);
+-uniform float2 _screenSize;
++uniform float2 _realRenderScreenSize;
+ 
+ 
+ struct v2f {
+@@ -89,8 +90,8 @@ half4 frag (v2f i) : COLOR
+  
+      
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) - (dir * i.clr.x * i.clr.y * diff);
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+ 
+  // half4 texcol = tex2D(_LevelTex, textCoord);
+ 
 diff --git a/ShortCut0.shader b/ShortCut0.shader
 index 60bc7f9..cec11c5 100644
 --- a/ShortCut0.shader
@@ -1287,7 +1454,7 @@ index b21daed..329e8f1 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/VoidSpawnBody.shader b/VoidSpawnBody.shader
-index 63f1648..49b78df 100644
+index 63f1648..a39541d 100644
 --- a/VoidSpawnBody.shader
 +++ b/VoidSpawnBody.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -1298,6 +1465,25 @@ index 63f1648..49b78df 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -59,6 +60,7 @@ uniform float2 _screenSize;
+ uniform float4 _spriteRect;
+ uniform float _waterLevel;
+ uniform float _RAIN;
++uniform float2 _realRenderScreenSize;
+ 
+ struct v2f {
+     float4  pos : SV_POSITION;
+@@ -93,8 +95,8 @@ textCoord.y /= _spriteRect.w - _spriteRect.y;
+ 
+ half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y);// - (dir * 0.01 * sin(dist*3.141592*2));
+ grabPos += (tex2D(_NoiseTex2, half2(textCoord.x*1.5, textCoord.y*0.75 + _RAIN*0.1)).xy + half2(-0.5, -0.5)) * 0.008 * i.clr.w;
+-grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+      
+ half4 grabCol = tex2D(_GrabTexture, grabPos);
+ 	
 diff --git a/VoidWormBody.shader b/VoidWormBody.shader
 index ebba730..0982dcd 100644
 --- a/VoidWormBody.shader
@@ -1359,7 +1545,7 @@ index a90bedf..25101cc 100644
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
 diff --git a/WaterNut.shader b/WaterNut.shader
-index dec8d80..9ea24c7 100644
+index dec8d80..65c4a93 100644
 --- a/WaterNut.shader
 +++ b/WaterNut.shader
 @@ -44,6 +44,7 @@ CGPROGRAM
@@ -1370,6 +1556,25 @@ index dec8d80..9ea24c7 100644
  
  //#pragma profileoption NumTemps=64
  //#pragma profileoption NumInstructionSlots=2048
+@@ -57,6 +58,7 @@ sampler2D _LevelTex;
+ uniform float2 _screenSize;
+ uniform float4 _spriteRect;
+ uniform float _waterLevel;
++uniform float2 _realRenderScreenSize;
+ 
+ struct v2f {
+     float4  pos : SV_POSITION;
+@@ -106,8 +108,8 @@ if(d < 6.0/30.0) return half4(0, 0, 0, 0);
+      dir.x *= _screenSize.y / _screenSize.x;
+ 
+      half2 grabPos = half2(i.scrPos.x, 1-i.scrPos.y) - (dir * 0.01 * sin(dist*3.141592*2));
+-     grabPos.x = (floor(grabPos.x*_screenSize.x)+0.5)/_screenSize.x;
+-     grabPos.y = (floor(grabPos.y*_screenSize.y)+0.5)/_screenSize.y;
++     grabPos.x = (floor(grabPos.x*_realRenderScreenSize.x)+0.5)/_realRenderScreenSize.x;
++     grabPos.y = (floor(grabPos.y*_realRenderScreenSize.y)+0.5)/_realRenderScreenSize.y;
+      
+ 	 half4 grabCol = tex2D(_GrabTexture, grabPos);
+ 	 
 diff --git a/WaterSplash.shader b/WaterSplash.shader
 index 87ad15f..1ac61a2 100644
 --- a/WaterSplash.shader
