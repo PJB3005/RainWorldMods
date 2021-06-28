@@ -1,0 +1,155 @@
+// Compiled shader for all platforms, uncompressed size: 22.4KB
+
+Shader "Futile/CoralNeuron" {
+Properties {
+ _MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
+}
+SubShader { 
+ Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+
+
+ // Stats for Vertex shader:
+ //       d3d11 : 7 math
+ //        d3d9 : 9 math
+ //        gles : 48 math, 3 texture, 1 branch
+ //       gles3 : 48 math, 3 texture, 1 branch
+ //   glesdesktop : 48 math, 3 texture, 1 branch
+ //       metal : 5 math
+ //      opengl : 9 math
+ // Stats for Fragment shader:
+ //       d3d11 : 31 math, 3 texture, 2 branch
+ //        d3d9 : 62 math, 3 texture, 1 branch
+ //       metal : 48 math, 3 texture, 1 branch
+ //      opengl : 46 math, 3 texture
+ Pass {
+  Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+  BindChannels {
+   Bind "vertex", Vertex
+   Bind "color", Color
+   Bind "texcoord", TexCoord
+  }
+  ZWrite Off
+  Cull Off
+  Fog {
+   Color (0,0,0,0)
+  }
+  Blend SrcAlpha OneMinusSrcAlpha
+Program "vp" {
+
+
+SubProgram "d3d11 " {
+// Stats: 7 math
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "texcoord" TexCoord0
+ConstBuffer "$Globals" 48
+Vector 32 [_MainTex_ST]
+ConstBuffer "UnityPerDraw" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  "$Globals" 0
+BindCB  "UnityPerDraw" 1
+"vs_4_0
+eefiecedpjgkdbbjhmdngcpbcladilodbagohjniabaaaaaaeeadaaaaadaaaaaa
+cmaaaaaapeaaaaaaiaabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaaaaaalaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapapaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
+enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheoieaaaaaaaeaaaaaa
+aiaaaaaagiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaheaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaamadaaaahnaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaedepemepfcaakl
+fdeieefclmabaaaaeaaaabaagpaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaa
+fjaaaaaeegiocaaaabaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaad
+dcbabaaaadaaaaaafpaaaaadpcbabaaaafaaaaaaghaaaaaepccabaaaaaaaaaaa
+abaaaaaagfaaaaaddccabaaaabaaaaaagfaaaaadmccabaaaabaaaaaagfaaaaad
+pccabaaaacaaaaaagiaaaaacabaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadgaaaaafpccabaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaak
+hcaabaaaaaaaaaaaegadbaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaadp
+aaaaaaaaaaaaaaahmccabaaaabaaaaaakgakbaaaaaaaaaaaagaebaaaaaaaaaaa
+dcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaaegiacaaaaaaaaaaaacaaaaaa
+ogikcaaaaaaaaaaaacaaaaaadgaaaaafpccabaaaacaaaaaaegbobaaaafaaaaaa
+doaaaaab"
+}
+
+
+
+
+}
+Program "fp" {
+
+
+SubProgram "d3d11 " {
+// Stats: 31 math, 3 textures, 2 branches
+SetTexture 0 [_NoiseTex] 2D 0
+SetTexture 1 [_PalTex] 2D 1
+ConstBuffer "$Globals" 48
+Float 16 [_RAIN]
+BindCB  "$Globals" 0
+"ps_4_0
+eefiecedhadjikglkhmedlclfdjbohoejcaenjapabaaaaaaeeagaaaaadaaaaaa
+cmaaaaaaliaaaaaaomaaaaaaejfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaaheaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+amaaaaaahnaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaapapaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaedepemepfcaaklepfdeheocmaaaaaa
+abaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+fdfgfpfegbhcghgfheaaklklfdeieefcfaafaaaaeaaaaaaafeabaaaafjaaaaae
+egiocaaaaaaaaaaaacaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaa
+abaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
+ffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadpcbabaaaacaaaaaagfaaaaad
+pccabaaaaaaaaaaagiaaaaacadaaaaaadiaaaaaldcaabaaaaaaaaaaaagiacaaa
+aaaaaaaaabaaaaaaaceaaaaaggggageaofpcaheaaaaaaaaaaaaaaaaadcaaaaak
+ecaabaaaaaaaaaaaakiacaaaaaaaaaaaabaaaaaaabeaaaaamnmmmmdnbkbabaaa
+abaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpdkbabaaaacaaaaaadiaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadiaaaaahecaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaa
+mnmmmmdndcaaaaamdcaabaaaabaaaaaaagbabaaaabaaaaaaaceaaaaamnmmemdo
+mhlkaidpaaaaaaaaaaaaaaaaegaabaaaaaaaaaaaefaaaaajpcaabaaaacaaaaaa
+igaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaajbcaabaaa
+aaaaaaaackaabaaaaaaaaaaaabeaaaaamnmmemdnakaabaaaacaaaaaadcaaaaak
+bcaabaaaaaaaaaaaakiacaaaaaaaaaaaabaaaaaaabeaaaaaaaaamaeaakaabaaa
+aaaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaamdpfmiea
+enaaaaagbcaabaaaaaaaaaaaaanaaaaaakaabaaaaaaaaaaaaaaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaaadpaaaaaaaibcaabaaaaaaaaaaa
+akaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaaadpdcaaaaakbcaabaaaaaaaaaaa
+akaabaiambaaaaaaaaaaaaaaabeaaaaaaaaaaaeaabeaaaaaaaaaiadpdiaaaaak
+kcaabaaaaaaaaaaafgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaiadpaaaaaaaa
+aaaaialpefaaaaajpcaabaaaabaaaaaangafbaaaaaaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaadcaaaaakccaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+abeaaaaamnmmemdnakaabaaaabaaaaaadcaaaaakccaabaaaaaaaaaaaakiacaaa
+aaaaaaaaabaaaaaaabeaaaaafclimgeabkaabaaaaaaaaaaadiaaaaahccaabaaa
+aaaaaaaabkaabaaaaaaaaaaaabeaaaaamdpfmieaenaaaaagccaabaaaaaaaaaaa
+aanaaaaabkaabaaaaaaaaaaaaaaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaa
+abeaaaaaaaaaaadpaaaaaaaiccaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaa
+abeaaaaaaaaaaadpdcaaaaakccaabaaaaaaaaaaabkaabaiambaaaaaaaaaaaaaa
+abeaaaaaaaaaaaeaabeaaaaaaaaaiadpdiaaaaahbcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaaiccaabaaaaaaaaaaaakbabaiaebaaaaaa
+abaaaaaaabeaaaaaaaaaaadpdcaaaaakccaabaaaaaaaaaaabkaabaiambaaaaaa
+aaaaaaaaabeaaaaaaaaaaaeaabeaaaaaaaaaiadpcpaaaaafccaabaaaaaaaaaaa
+bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
+mnmmemdobjaaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaadcaaaaakbcaabaaa
+aaaaaaaaakaabaiaebaaaaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaaaaaaaadp
+dcaaaaakbcaabaaaaaaaaaaaakaabaiambaaaaaaaaaaaaaaabeaaaaaaaaaaaea
+abeaaaaaaaaaiadpdbaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+aaaaeadpbpaaaeadakaabaaaaaaaaaaadgaaaaaipccabaaaaaaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadoaaaaabbfaaaaabefaaaaampcaabaaa
+aaaaaaaaaceaaaaaaaaahedpaaaahadpaaaaaaaaaaaaaaaaeghobaaaabaaaaaa
+aagabaaaabaaaaaadcaaaaajiccabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+aaaaialoabeaaaaaaaaaaadpdgaaaaafhccabaaaaaaaaaaaegbcbaaaacaaaaaa
+doaaaaab"
+}
+
+
+
+
+}
+ }
+}
+}

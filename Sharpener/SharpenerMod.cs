@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using BepInEx;
 using MonoMod.RuntimeDetour;
 using RWCustom;
@@ -83,6 +85,7 @@ Shader ""Tutorial/Basic"" {
                 _upscaler.filterMode = FilterMode.Bilinear;
 
                 On.Futile.Init += FutileOnInit;
+                On.RainWorld.Start += RainWorldOnStart;
 
                 _detourSetResolution = new NativeDetour(
                     (SetResolution) Screen.SetResolution,
@@ -130,7 +133,53 @@ Shader ""Tutorial/Basic"" {
             }
         }
 
-        private bool Fuck = false;
+        private void RainWorldOnStart(On.RainWorld.orig_Start orig, RainWorld self)
+        {
+            orig(self);
+
+            try
+            {
+                // Load all our custom shaders
+                Debug.Log("Sharpener: Loading fixed shaders");
+
+                var shaders = new Dictionary<string, Shader>();
+
+                var assembly = typeof(SharpenerMod).Assembly;
+                foreach (var resource in assembly.GetManifestResourceNames())
+                {
+                    Debug.Log(resource);
+                    if (!resource.StartsWith("Sharpener.Shaders.") || !resource.EndsWith(".shader"))
+                        continue;
+
+                    using var stream = assembly.GetManifestResourceStream(resource);
+                    using var sr = new StreamReader(stream, Encoding.UTF8);
+
+                    var shaderCode = sr.ReadToEnd();
+                    var material = new Material(shaderCode);
+                    var shader = material.shader;
+
+                    shaders.Add(shader.name, shader);
+                }
+
+                Debug.Log($"Sharpener: {shaders.Count} shaders to replace...");
+
+                var count = 0;
+                foreach (var fShader in self.Shaders.Values)
+                {
+                    if (shaders.TryGetValue(fShader.shader.name, out var replacement))
+                    {
+                        fShader.shader = replacement;
+                        count += 1;
+                    }
+                }
+
+                Debug.Log($"Sharpener: Replaced {count} shaders");
+            }
+            catch (Exception e)
+            {
+                MessageBoxW((nint) 0, e.ToString(), "Fuck", 0);
+            }
+        }
 
         public void Update()
         {

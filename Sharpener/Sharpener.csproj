@@ -32,4 +32,10 @@
   <ItemGroup>
     <Compile Include="../Shared/Shared.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Shaders" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders/*" />
+  </ItemGroup>
  </Project>
