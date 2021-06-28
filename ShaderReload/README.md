@@ -10,7 +10,7 @@ Usage instructions:
 4. Get shader files from the game (they raw shader source files are in `Assets/Futile/Resources/Shaders` in the game's directory) and copy them into the Unity project.
 5. Change the shader files.
 6. Select the shader file you changed in the Unity editor and click "Show all" next to "Compiled code".
-7. Unity will output the compiled shader to the `Temp` folder in the project, and the mod will automatically pick the file up and reload the in-game shaders with it.
+7. Unity will output the compiled shader to the `Temp` folder in the project, and the mod will automatically pick the file up and reload the in-game shaders with it. (NOTE: Unity deletes this folder when you close the editor, be warned)
 
 More features:
 * Press F9 to swap between built-in and loaded shaders.
