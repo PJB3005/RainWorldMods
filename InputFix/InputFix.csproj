@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Company>PJB</Company> <!-- ConfigMachine reads this -->
   </PropertyGroup>
   <ItemGroup>
