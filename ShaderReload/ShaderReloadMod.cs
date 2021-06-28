@@ -28,11 +28,14 @@ namespace ShaderReload
         {
             On.RainWorld.Start += OnRainWorldOnStart;
 
-            _fsWatcher = new FileSystemWatcher(UnityShaderDir, "*.shader");
-            _fsWatcher.Created += OnFileSystemChange;
-            _fsWatcher.Renamed += OnFileSystemChange;
-            _fsWatcher.Changed += OnFileSystemChange;
-            _fsWatcher.EnableRaisingEvents = true;
+            if (Directory.Exists(UnityShaderDir))
+            {
+                _fsWatcher = new FileSystemWatcher(UnityShaderDir, "*.shader");
+                _fsWatcher.Created += OnFileSystemChange;
+                _fsWatcher.Renamed += OnFileSystemChange;
+                _fsWatcher.Changed += OnFileSystemChange;
+                _fsWatcher.EnableRaisingEvents = true;
+            }
         }
 
         private void Update()
@@ -59,6 +62,12 @@ namespace ShaderReload
             orig(self);
 
             _rainWorld = self;
+
+            if (!Directory.Exists(UnityShaderDir))
+            {
+                Debug.Log($"SHR: Shader dir {UnityShaderDir} does not exist");
+                return;
+            }
 
             foreach (var fName in Directory.GetFiles(UnityShaderDir))
             {

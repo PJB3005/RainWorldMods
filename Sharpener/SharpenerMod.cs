@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using BepInEx;
 using MonoMod.RuntimeDetour;
@@ -13,7 +12,7 @@ using UnityEngine;
 namespace Sharpener
 {
     [BepInPlugin("pjb3005.sharpener", "Sharpener", "0.1.0")]
-    public class SharpenerMod : BaseUnityPlugin
+    public partial class SharpenerMod : BaseUnityPlugin
     {
         private delegate void SetResolution(int width, int height, bool fullscreen);
 
@@ -27,8 +26,6 @@ namespace Sharpener
         private static Func<int> _trampolineHeight;
         private static NativeDetour _detourMousePosition;
         private static Func<Vector3> _trampolineMousePosition;
-        private static NativeDetour _detourFullscreenSet;
-        private static Action<bool> _trampolineFullscreenSet;
 
         private RenderTexture _gameRenderTexture;
         private Futile _futile;
@@ -42,12 +39,11 @@ namespace Sharpener
         private bool _badCameraDisabled;
 
         private RenderMode _mode = RenderMode.UpDown;
-        private bool _lastKeyDown;
 
         private bool HighResBackbuffer => !Screen.fullScreen || _mode == RenderMode.GameDefault;
         private bool IsUpDown => Screen.fullScreen && _mode == RenderMode.UpDown;
 
-        private Material _blitShader;
+        private readonly Material _blitShader;
 
         private const string BlitShaderSource = @"
 Shader ""Tutorial/Basic"" {
@@ -95,32 +91,24 @@ Shader ""Tutorial/Basic"" {
 
                 _gameRenderTexture = new RenderTexture(1, 1, 24);
 
-                // ReSharper disable once PossibleNullReferenceException
-                var getWidth = typeof(Screen).GetProperty(nameof(Screen.width)).GetGetMethod();
+                // Screen.get_Width
+                var getWidth = typeof(Screen).GetProperty(nameof(Screen.width))!.GetGetMethod();
                 MakeNativeHook(
                     getWidth,
                     nameof(HookScreenWidth),
                     out _trampolineWidth,
                     out _detourWidth);
 
-                // ReSharper disable once PossibleNullReferenceException
-                var getHeight = typeof(Screen).GetProperty(nameof(Screen.height)).GetGetMethod();
+                // Screen.get_Height
+                var getHeight = typeof(Screen).GetProperty(nameof(Screen.height))!.GetGetMethod();
                 MakeNativeHook(
                     getHeight,
                     nameof(HookScreenHeight),
                     out _trampolineHeight,
                     out _detourHeight);
 
-                // ReSharper disable once PossibleNullReferenceException
-                var setFullscreen = typeof(Screen).GetProperty(nameof(Screen.fullScreen)).GetSetMethod();
-                MakeNativeHook(
-                    setFullscreen,
-                    nameof(HookSetFullscreen),
-                    out _trampolineFullscreenSet,
-                    out _detourFullscreenSet);
-
-                // ReSharper disable once PossibleNullReferenceException
-                var getMousePosition = typeof(Input).GetProperty(nameof(Input.mousePosition)).GetGetMethod();
+                // Screen.get_MousePosition
+                var getMousePosition = typeof(Input).GetProperty(nameof(Input.mousePosition))!.GetGetMethod();
                 MakeNativeHook(
                     getMousePosition,
                     nameof(HookMousePosition),
@@ -129,7 +117,7 @@ Shader ""Tutorial/Basic"" {
             }
             catch (Exception e)
             {
-                MessageBoxW(IntPtr.Zero, e.ToString(), "Fuck", 0);
+                Shared.MessageBox(e.ToString());
             }
         }
 
@@ -147,7 +135,6 @@ Shader ""Tutorial/Basic"" {
                 var assembly = typeof(SharpenerMod).Assembly;
                 foreach (var resource in assembly.GetManifestResourceNames())
                 {
-                    Debug.Log(resource);
                     if (!resource.StartsWith("Sharpener.Shaders.") || !resource.EndsWith(".shader"))
                         continue;
 
@@ -177,8 +164,10 @@ Shader ""Tutorial/Basic"" {
             }
             catch (Exception e)
             {
-                MessageBoxW((nint) 0, e.ToString(), "Fuck", 0);
+                Shared.MessageBox(e.ToString());
             }
+
+            InitUI();
         }
 
         public void Update()
@@ -190,30 +179,26 @@ Shader ""Tutorial/Basic"" {
             {
                 foreach (var camera in Camera.allCameras)
                 {
-                    Debug.Log($"CAMERA: {camera.name}, {camera.tag}, {camera.targetTexture}");
+                    Debug.Log($"Sharpener: CAMERA: {camera.name}, {camera.tag}, {camera.targetTexture}");
 
                     if (!camera.CompareTag("MainCamera"))
                     {
-                        Debug.Log("Disabling bad camera");
+                        Debug.Log("Sharpener: Disabling bad camera");
                         camera.enabled = false;
                         _badCameraDisabled = true;
                     }
                 }
             }
 
-            if (Input.GetKey(KeyCode.F10) && !_lastKeyDown)
+            if (Input.GetKeyDown(KeyCode.F10))
             {
-                _lastKeyDown = true;
-                _mode = (RenderMode) (((int) _mode + 1) % 3);
+                SetMode((RenderMode) (((int) _mode + 1) % 3));
             }
-
-            if (!Input.GetKey(KeyCode.F10))
-                _lastKeyDown = false;
 
             // Update framebuffers if game resolution changed.
             if (_gameRes != _gameRenderTexture.Size())
             {
-                Debug.Log($"Regenerating game render targets: {_gameRes}");
+                Debug.Log($"Sharpener: Regenerating game render targets: {_gameRes}");
                 Destroy(_gameRenderTexture);
                 _gameRenderTexture = new RenderTexture(_gameRes.x, _gameRes.y, 24);
 
@@ -238,8 +223,10 @@ Shader ""Tutorial/Basic"" {
             if (curScreenRes != _realRes)
             {
                 _realRes = curScreenRes;
-                Debug.Log($"NEW SCREEN RESOLUTION: {_realRes}");
+                Debug.Log($"Sharpener: new screen resolution: {_realRes}");
             }
+
+            UIUpdate();
         }
 
         private void FutileOnInit(On.Futile.orig_Init orig, Futile self, FutileParams futileParams)
@@ -280,26 +267,13 @@ Shader ""Tutorial/Basic"" {
             return scaled;
         }
 
-        private static void HookSetFullscreen(bool value)
+        private void SetMode(RenderMode mode)
         {
-            if (value == Screen.fullScreen)
-                return;
+            _mode = mode;
+            Debug.Log($"Sharpener: Mode changed to {mode}");
 
-            _trampolineFullscreenSet(value);
-
-            if (value)
-            {
-                var (w, h) = _instance._fullscreenRes;
-                _trampolineSetResolution(w, h, true);
-            }
+            UIShowModeSwitch();
         }
-
-        [DllImport("user32.dll")]
-        private static extern int MessageBoxW(
-            IntPtr hWnd,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpText,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpCaption,
-            uint uType);
 
         private sealed class Scaler : MonoBehaviour
         {
@@ -379,6 +353,7 @@ Shader ""Tutorial/Basic"" {
         {
             GameDefault = 0,
             UpDown = 1,
+            // ReSharper disable once UnusedMember.Local
             NativeNearest = 2,
         }
     }

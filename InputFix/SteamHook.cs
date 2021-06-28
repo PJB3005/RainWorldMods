@@ -29,7 +29,7 @@ namespace InputFix
 
         private static void FindSteamModule()
         {
-            Debug.Log("FINDING STEAM MODULE.");
+            Debug.Log("InputFix: finding Steam.");
 
             var ourProcess = Process.GetCurrentProcess();
             var pid = (uint) ourProcess.Id;
@@ -38,7 +38,7 @@ namespace InputFix
 
             if (hSnapShot == INVALID_HANDLE_VALUE)
             {
-                Debug.Log("CreateToolhelp32Snapshot failed");
+                Debug.Log("InputFix: CreateToolhelp32Snapshot failed");
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace InputFix
 
                 if (!Module32First(hSnapShot, &me32))
                 {
-                    Debug.Log("Module32First failed");
+                    Debug.Log("InputFix: Module32First failed");
                     return;
                 }
 
@@ -60,7 +60,7 @@ namespace InputFix
 
                     if (string.Equals(name, "GameOverlayRenderer.dll", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Debug.Log("FOUND STEAM!");
+                        Debug.Log("InputFix: found Steam!");
                         RanFromSteam = true;
                     }
 

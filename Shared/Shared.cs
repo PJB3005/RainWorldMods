@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using RWCustom;
 using UnityEngine;
 
@@ -28,4 +30,16 @@ public static class Shared
         key = kv.Key;
         value = kv.Value;
     }
+
+    public static void MessageBox(string text, string caption = "oops")
+    {
+        MessageBoxW((nint) 0, text, caption, 0);
+    }
+
+    [DllImport("user32.dll")]
+    private static extern int MessageBoxW(
+        IntPtr hWnd,
+        [MarshalAs(UnmanagedType.LPWStr)] string lpText,
+        [MarshalAs(UnmanagedType.LPWStr)] string lpCaption,
+        uint uType);
 }

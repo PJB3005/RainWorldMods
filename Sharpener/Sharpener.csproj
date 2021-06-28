@@ -28,12 +28,12 @@
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Assemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="ConfigMachine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Assemblies\ConfigMachine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../Shared/Shared.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Shaders" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders/*" />
