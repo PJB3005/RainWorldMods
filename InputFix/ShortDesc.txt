@@ -1,0 +1,3 @@
+InputFix by PJB
+
+Fixes the game's controller handling, and minor improvements like trigger button binding.
