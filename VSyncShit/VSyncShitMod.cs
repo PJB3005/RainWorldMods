@@ -45,6 +45,8 @@ namespace VSyncShit
                 "VSYNC");
 
             self.pages[0].subObjects.Add(checkBox);
+
+            self.blackSprite.isVisible = false;
         }
 
         private sealed class VSyncCheckBoxOwner : CheckBox.IOwnCheckBox
