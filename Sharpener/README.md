@@ -13,7 +13,7 @@ The mod has three modes:
 1. [Have BepInEx and BOI installed](https://www.raindb.net/tutorials.html)
 2. Download the mod from **[HERE](https://github.com/PJB3005/RainWorldMods/releases/download/sharpener-0.1.0/Sharpener.dll)**.
 3. Install the mod in BOI.
-4. (optional) install [ConfigMachine](https://drive.google.com/file/d/1NIE8conaoI1OOHevi4K9tvOG4v-NIfYf/view) to change settings like resolution easily.
+4. (optional) install [ConfigMachine](https://drive.google.com/file/d/1NIE8conaoI1OOHevi4K9tvOG4v-NIfYf/view) to change settings like resolution easily **note: at the time of writing, the latest ConfigMachine version misses some fixes necessary to make the options menu work. It'll probably be released soon-ish. In the mean time you can press F10 to change the render mode in-game.**
 5. Go play the game and get eaten by a lizard or something.
 
 ## Comparison shot
