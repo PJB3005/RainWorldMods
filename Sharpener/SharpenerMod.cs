@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using BepInEx;
 using MonoMod.RuntimeDetour;
 using RWCustom;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Sharpener
 {
@@ -16,7 +18,7 @@ namespace Sharpener
     {
         private delegate void SetResolution(int width, int height, bool fullscreen);
 
-        private static SharpenerMod _instance;
+        public static SharpenerMod Instance { get; private set; }
 
         private static SetResolution _trampolineSetResolution;
         private static NativeDetour _detourSetResolution;
@@ -27,21 +29,32 @@ namespace Sharpener
         private static NativeDetour _detourMousePosition;
         private static Func<Vector3> _trampolineMousePosition;
 
-        private RenderTexture _gameRenderTexture;
-        private Futile _futile;
-
-        private IntVector2 _gameRes = new IntVector2(600, 400);
-        private IntVector2 _realRes;
-        private IntVector2 _fullscreenRes;
-
         private RenderTexture _upscaler;
+        private RenderTexture _gameRenderTexture;
 
         private bool _badCameraDisabled;
+        private Futile _futile;
 
-        private RenderMode _mode = RenderMode.UpDown;
+        // Resolution the game wants/expects.
+        private IntVector2 _gameRes = new IntVector2(600, 400);
 
-        private bool HighResBackbuffer => !Screen.fullScreen || _mode == RenderMode.GameDefault;
-        private bool IsUpDown => Screen.fullScreen && _mode == RenderMode.UpDown;
+        // Real resolution of the game.
+        private IntVector2 _realRes;
+
+        // Resolution for full-screen.
+        private IntVector2 FullscreenRes => _cfgFullScreenRes.Value.Resolution;
+        private ResolutionCfg _defaultFullscreenRes;
+
+        private IntVector2 TargetHighRes =>
+            Screen.fullScreen
+                ? FullscreenRes
+                : ScalingEnabled
+                    ? WindowOverrideSize
+                    : _gameRes;
+
+        private bool ScalingEnabled => _cfgOverrideWindow.Value || Screen.fullScreen;
+        private bool GameResBackbuffer => !ScalingEnabled || Mode == RenderMode.GameDefault;
+        private bool IsUpDown => ScalingEnabled && Mode == RenderMode.UpDown;
 
         private readonly Material _blitShader;
 
@@ -63,19 +76,25 @@ Shader ""Tutorial/Basic"" {
     }
 ";
 
+        private RenderMode Mode
+        {
+            get => _cfgMode.Value;
+            set => _cfgMode.Value = value;
+        }
+
         public SharpenerMod()
         {
             try
             {
                 _blitShader = new Material(BlitShaderSource);
 
-                _fullscreenRes = Screen.resolutions
+                _defaultFullscreenRes = new ResolutionCfg(Screen.resolutions
                     .OrderBy(r => r.width)
                     .ThenBy(r => r.height)
                     .Last()
-                    .ToVec();
+                    .ToVec());
 
-                _instance = this;
+                Instance = this;
 
                 _upscaler = new RenderTexture(1, 1, 0);
                 _upscaler.filterMode = FilterMode.Bilinear;
@@ -114,6 +133,8 @@ Shader ""Tutorial/Basic"" {
                     nameof(HookMousePosition),
                     out _trampolineMousePosition,
                     out _detourMousePosition);
+
+                InitConfig();
             }
             catch (Exception e)
             {
@@ -190,9 +211,9 @@ Shader ""Tutorial/Basic"" {
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.F10))
+            if (Input.GetKeyDown(_cfgSwapButton.Value))
             {
-                SetMode((RenderMode) (((int) _mode + 1) % 3));
+                Mode = (RenderMode) (((int) Mode + 1) % 3);
             }
 
             // Update framebuffers if game resolution changed.
@@ -211,7 +232,7 @@ Shader ""Tutorial/Basic"" {
             _futile.camera.targetTexture = IsUpDown ? _gameRenderTexture : null;
 
             // Set resolution to fullscreen res if fullscreen and not using GameDefault.
-            var shouldSetScreenRes = HighResBackbuffer ? _gameRes : _fullscreenRes;
+            var shouldSetScreenRes = GameResBackbuffer ? _gameRes : TargetHighRes;
             var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
             if (shouldSetScreenRes != curScreenRes)
             {
@@ -227,7 +248,7 @@ Shader ""Tutorial/Basic"" {
             }
 
             Shader.SetGlobalVector("_realRenderScreenSize",
-                (_mode == RenderMode.NativeNearest ? _fullscreenRes : _gameRes).ToVector2());
+                (Mode == RenderMode.NativeNearest ? FullscreenRes : _gameRes).ToVector2());
 
             UIUpdate();
         }
@@ -243,46 +264,55 @@ Shader ""Tutorial/Basic"" {
 
         private static void HookScreenSetResolution(int width, int height, bool fullscreen)
         {
-            _instance._gameRes = new IntVector2(width, height);
+            Instance._gameRes = new IntVector2(width, height);
         }
 
-        private static int HookScreenWidth() => _instance._gameRes.x;
-        private static int HookScreenHeight() => _instance._gameRes.y;
+        private static int HookScreenWidth() => Instance._gameRes.x;
+        private static int HookScreenHeight() => Instance._gameRes.y;
 
         private static Vector3 HookMousePosition()
         {
             var realPosition = _trampolineMousePosition();
-            if (_instance.HighResBackbuffer)
+            if (Instance.GameResBackbuffer)
                 return realPosition;
 
-            var realRes = _instance._realRes.ToVector2();
-            var gameRes = _instance._gameRes.ToVector2();
-            var scale = gameRes.x / realRes.x;
+            var gameRes = Instance._gameRes.ToVector2();
+            Instance.CalcScreenRect(out var scrPos, out var scrSize);
 
-            var scaled = realPosition * scale;
+            var posX = realPosition.x;
+            var posY = realPosition.y;
 
-            /*
-            Debug.Log($"REAL: {realPosition}");
-            Debug.Log($"SCALED: {scaled}");
-            Debug.Log($"SCALE: {scale}");
-            */
+            posX -= scrPos.x;
+            posY -= scrPos.y;
 
-            return scaled;
+            posX /= scrSize.x;
+            posY /= scrSize.y;
+
+            posX *= gameRes.x;
+            posY *= gameRes.y;
+
+            return new Vector3(posX, posY, 0);
         }
 
-        private void SetMode(RenderMode mode)
+        private void CalcScreenRect(out Vector2 pos, out Vector2 size)
         {
-            _mode = mode;
-            Debug.Log($"Sharpener: Mode changed to {mode}");
+            var gameSize = _gameRes.ToVector2();
+            var screenSize = _realRes.ToVector2();
 
-            UIShowModeSwitch();
+            var ratioX = screenSize.x / gameSize.x;
+            var ratioY = screenSize.y / gameSize.y;
+
+            var ratio = Math.Min(ratioX, ratioY);
+
+            size = gameSize * ratio;
+            pos = (screenSize - size) / 2;
         }
 
         private sealed class Scaler : MonoBehaviour
         {
             private void OnPreRender()
             {
-                if (_instance.IsUpDown)
+                if (Instance.IsUpDown)
                     GL.LoadProjectionMatrix(GL.GetGPUProjectionMatrix(Camera.current.projectionMatrix, true));
             }
 
@@ -293,33 +323,36 @@ Shader ""Tutorial/Basic"" {
                 GL.PushMatrix();
                 GL.LoadOrtho();
 
-                if (_instance.IsUpDown)
+                if (Instance.IsUpDown)
                 {
-                    _instance._gameRenderTexture.filterMode = FilterMode.Point;
-                    RenderTexture.active = _instance._upscaler;
+                    Instance._gameRenderTexture.filterMode = FilterMode.Point;
+                    RenderTexture.active = Instance._upscaler;
 
                     // Alpha channel to 1
                     GL.Clear(true, true, Color.black);
 
                     Graphics.DrawTexture(
                         new Rect(0, 0, 1, 1),
-                        _instance._gameRenderTexture,
+                        Instance._gameRenderTexture,
                         new Rect(0, 0, 1, 1),
                         0, 0, 0, 0,
-                        _instance._blitShader);
+                        Instance._blitShader);
 
                     RenderTexture.active = null;
 
                     GL.LoadOrtho();
-                    GL.Viewport(new Rect(0, 0, _instance._realRes.x, _instance._realRes.y));
+                    GL.Viewport(new Rect(0, 0, Instance._realRes.x, Instance._realRes.y));
+                    GL.LoadPixelMatrix(0, Instance._realRes.x, 0, Instance._realRes.y);
                     GL.Clear(true, true, Color.clear);
 
+                    Instance.CalcScreenRect(out var posScreen, out var sizeScreen);
+
                     Graphics.DrawTexture(
+                        new Rect(posScreen.x, posScreen.y, sizeScreen.x, sizeScreen.y),
+                        Instance._upscaler,
                         new Rect(0, 1, 1, -1),
-                        _instance._upscaler,
-                        new Rect(0, 0, 1, 1),
                         0, 0, 0, 0,
-                        _instance._blitShader);
+                        Instance._blitShader);
                 }
 
                 GL.PopMatrix();
@@ -352,12 +385,24 @@ Shader ""Tutorial/Basic"" {
             trampoline = detour.GenerateTrampoline<TDelegate>();
         }
 
+        private static string ModeToName(RenderMode mode)
+        {
+            return mode switch
+            {
+                RenderMode.GameDefault => "Blurry (game default)",
+                RenderMode.UpDown => "Sharper",
+                RenderMode.NativeNearest => "Native resolution",
+                _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+            };
+        }
+
         private enum RenderMode
         {
-            GameDefault = 0,
-            UpDown = 1,
+            [Description("Blurry (game default)")] GameDefault = 0,
+            [Description("Sharper")] UpDown = 1,
+
             // ReSharper disable once UnusedMember.Local
-            NativeNearest = 2,
+            [Description("Native resolution")] NativeNearest = 2,
         }
     }
 }

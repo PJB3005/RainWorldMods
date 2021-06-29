@@ -1,4 +1,5 @@
 ﻿using System;
+using BepInEx.Configuration;
 using UnityEngine;
 
 namespace Sharpener
@@ -24,7 +25,7 @@ namespace Sharpener
         {
             DestroyModeShow();
 
-            _modeLabel = new FLabel("font", ModeToName(_mode));
+            _modeLabel = new FLabel("font", ModeToName(Mode));
             _modeLabel.alignment = FLabelAlignment.Left;
             _modeLabel.x = 10;
             _modeLabel.y = 768 - 13;
@@ -37,17 +38,6 @@ namespace Sharpener
         {
             _modeLabel?.RemoveFromContainer();
             _modeLabel = null;
-        }
-
-        private static string ModeToName(RenderMode mode)
-        {
-            return mode switch
-            {
-                RenderMode.GameDefault => "Blurry (base game)",
-                RenderMode.UpDown => "Sharper",
-                RenderMode.NativeNearest => "Native resolution",
-                _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-            };
         }
     }
 }
