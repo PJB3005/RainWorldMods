@@ -1,0 +1,4 @@
+Sharpener by PJB
+
+Makes the game look better than ever before with sharper upscaling and a native resolution mode.
+
