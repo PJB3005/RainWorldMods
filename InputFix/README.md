@@ -36,7 +36,7 @@ No, I can't have the mod "just know" whether steam input is configured correctly
 
 Steam emulates XInput when Steam Input is enabled. Something about this causes Unity's non-XInput handling code to just break, and the result is broken controller handling in various scenarios.
 
-The mod works by hooking a few Unity functions, namely `Input.GetKey(KeyCode)`, `Input.GetAxisRaw(string)`, `Input.anyKey` and `Input.GetJoystickNames()`. It replaces all the gamepad related behavior with my own, that directly access XInput. Input's polled once per frame with `XInputGetState()`. Really nothing more to it.
+The mod works by hooking a few Unity functions, namely `Input.GetKey(KeyCode)`, `Input.GetKeyDown(KeyCode)`, `Input.GetKeyUp(KeyCode)`, `Input.GetAxisRaw(string)`, `Input.anyKey` and `Input.GetJoystickNames()`. It replaces all the gamepad related behavior with my own, that directly access XInput. Input's polled once per frame with `XInputGetState()`. Really nothing more to it.
 
 No Rain World code (like `RWInput`) has been hooked outside of stuff like the options menu, so this should probably be compatible with everything (like ManyMoreFixes' dpad slide fix).
 

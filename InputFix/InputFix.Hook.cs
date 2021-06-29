@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using MonoMod.RuntimeDetour;
 using UnityEngine;
+using static InputFix.XInput;
 
 namespace InputFix
 {
@@ -16,6 +17,10 @@ namespace InputFix
 
         private static Func<KeyCode, bool> _trampolineInputGetKey;
         private static NativeDetour _hookInputGetKey;
+        private static Func<KeyCode, bool> _trampolineInputGetKeyUp;
+        private static NativeDetour _hookInputGetKeyUp;
+        private static Func<KeyCode, bool> _trampolineInputGetKeyDown;
+        private static NativeDetour _hookInputGetKeyDown;
         private static Func<string[]> _trampolineInputGetJoystickNames;
         private static NativeDetour _hookInputGetJoystickNames;
         private static Func<string, float> _trampolineInputGetAxisRaw;
@@ -23,22 +28,24 @@ namespace InputFix
         private static Func<bool> _trampolineInputAnyKey;
         private static NativeDetour _hookInputAnyKey;
 
-        private static readonly XInput.XINPUT_STATE[] XInputStates = new XInput.XINPUT_STATE[4];
+        // If true, A is the current state for this frame.
+        private static bool XInputCurStateA;
+        private static readonly DoubleXInputState[] XInputStates = new DoubleXInputState[4];
         private static readonly bool[] XInputConnected = new bool[4];
         private static int _lastFrameCount;
 
         private static readonly Dictionary<KeyCode, ushort> KeyCodeXInputMap = new Dictionary<KeyCode, ushort>
         {
-            [KeyCode.JoystickButton0] = XInput.XINPUT_GAMEPAD_A,
-            [KeyCode.JoystickButton1] = XInput.XINPUT_GAMEPAD_B,
-            [KeyCode.JoystickButton2] = XInput.XINPUT_GAMEPAD_X,
-            [KeyCode.JoystickButton3] = XInput.XINPUT_GAMEPAD_Y,
-            [KeyCode.JoystickButton4] = XInput.XINPUT_GAMEPAD_LEFT_SHOULDER,
-            [KeyCode.JoystickButton5] = XInput.XINPUT_GAMEPAD_RIGHT_SHOULDER,
-            [KeyCode.JoystickButton6] = XInput.XINPUT_GAMEPAD_BACK,
-            [KeyCode.JoystickButton7] = XInput.XINPUT_GAMEPAD_START,
-            [KeyCode.JoystickButton8] = XInput.XINPUT_GAMEPAD_LEFT_THUMB,
-            [KeyCode.JoystickButton9] = XInput.XINPUT_GAMEPAD_RIGHT_THUMB
+            [KeyCode.JoystickButton0] = XINPUT_GAMEPAD_A,
+            [KeyCode.JoystickButton1] = XINPUT_GAMEPAD_B,
+            [KeyCode.JoystickButton2] = XINPUT_GAMEPAD_X,
+            [KeyCode.JoystickButton3] = XINPUT_GAMEPAD_Y,
+            [KeyCode.JoystickButton4] = XINPUT_GAMEPAD_LEFT_SHOULDER,
+            [KeyCode.JoystickButton5] = XINPUT_GAMEPAD_RIGHT_SHOULDER,
+            [KeyCode.JoystickButton6] = XINPUT_GAMEPAD_BACK,
+            [KeyCode.JoystickButton7] = XINPUT_GAMEPAD_START,
+            [KeyCode.JoystickButton8] = XINPUT_GAMEPAD_LEFT_THUMB,
+            [KeyCode.JoystickButton9] = XINPUT_GAMEPAD_RIGHT_THUMB
         };
 
         private static void InitHooks()
@@ -46,10 +53,26 @@ namespace InputFix
             // Input.GetKey(KeyCode)
             MakeNativeHook(
                 nameof(Input.GetKey),
-                nameof(HookInputGetKeyHook),
+                nameof(HookInputGetKey),
                 new[] {typeof(KeyCode)},
                 out _trampolineInputGetKey,
                 out _hookInputGetKey);
+
+            // Input.GetKeyDown(KeyCode)
+            MakeNativeHook(
+                nameof(Input.GetKeyDown),
+                nameof(HookInputGetKeyDown),
+                new[] {typeof(KeyCode)},
+                out _trampolineInputGetKeyDown,
+                out _hookInputGetKeyDown);
+
+            // Input.GetKeyUp(KeyCode)
+            MakeNativeHook(
+                nameof(Input.GetKeyUp),
+                nameof(HookInputGetKeyUp),
+                new[] {typeof(KeyCode)},
+                out _trampolineInputGetKeyUp,
+                out _hookInputGetKeyUp);
 
             // Input.GetJoystickNames()
             MakeNativeHook(
@@ -102,26 +125,49 @@ namespace InputFix
             trampoline = detour.GenerateTrampoline<TDelegate>();
         }
 
-        private static bool HookInputGetKeyHook(KeyCode code)
+        private static bool HookInputGetKey(KeyCode code)
         {
             if (!PreHookChecks() || code < KeyCode.JoystickButton0)
                 return _trampolineInputGetKey(code);
 
+            return GetKeyImpl(code);
+        }
+
+        private static bool HookInputGetKeyDown(KeyCode code)
+        {
+            if (!PreHookChecks() || code < KeyCode.JoystickButton0)
+                return _trampolineInputGetKeyDown(code);
+
+            var now = GetKeyImpl(code);
+            var last = GetKeyImpl(code, lastFrame: true);
+            return now && !last;
+        }
+
+        private static bool HookInputGetKeyUp(KeyCode code)
+        {
+            if (!PreHookChecks() || code < KeyCode.JoystickButton0)
+                return _trampolineInputGetKeyUp(code);
+
+            return !GetKeyImpl(code) && GetKeyImpl(code, lastFrame: true);
+        }
+
+        private static bool GetKeyImpl(KeyCode code, bool lastFrame=false)
+        {
             var port = (code - KeyCode.JoystickButton0) / 20;
             var normalizedCode = NormalizeKeycode(code);
 
             // Left trigger
             if (normalizedCode == KeyCode.JoystickButton10)
-                return GetGamepadInfo(port, gamepad => gamepad.bLeftTrigger > TriggerThreshold ? (bool?) true : null);
+                return GetGamepadInfo(port, gamepad => gamepad.bLeftTrigger > TriggerThreshold ? (bool?) true : null, lastFrame);
 
             // Right trigger
             if (normalizedCode == KeyCode.JoystickButton11)
-                return GetGamepadInfo(port, gamepad => gamepad.bRightTrigger > TriggerThreshold ? (bool?) true : null);
+                return GetGamepadInfo(port, gamepad => gamepad.bRightTrigger > TriggerThreshold ? (bool?) true : null, lastFrame);
 
             if (!KeyCodeXInputMap.TryGetValue(normalizedCode, out var mask))
                 return false;
 
-            return GetGamepadInfo(port, gamepad => (gamepad.wButtons & mask) != 0 ? (bool?) true : null);
+            return GetGamepadInfo(port, gamepad => (gamepad.wButtons & mask) != 0 ? (bool?) true : null, lastFrame);
         }
 
         private static string[] HookInputGetJoystickNames()
@@ -155,23 +201,23 @@ namespace InputFix
             if (TryDoLeftStick("Vertical", gamepad => gamepad.sThumbLY, out axis))
                 return axis;
 
-            if (GetDpad("DschockDpadX", XInput.XINPUT_GAMEPAD_DPAD_RIGHT, XInput.XINPUT_GAMEPAD_DPAD_LEFT,
+            if (GetDpad("DschockDpadX", XINPUT_GAMEPAD_DPAD_RIGHT, XINPUT_GAMEPAD_DPAD_LEFT,
                     out var dpadX) ||
-                GetDpad("XboxDpadX", XInput.XINPUT_GAMEPAD_DPAD_RIGHT, XInput.XINPUT_GAMEPAD_DPAD_LEFT, out dpadX))
+                GetDpad("XboxDpadX", XINPUT_GAMEPAD_DPAD_RIGHT, XINPUT_GAMEPAD_DPAD_LEFT, out dpadX))
             {
                 return dpadX;
             }
 
-            if (GetDpad("DschockDpadY", XInput.XINPUT_GAMEPAD_DPAD_UP, XInput.XINPUT_GAMEPAD_DPAD_DOWN,
+            if (GetDpad("DschockDpadY", XINPUT_GAMEPAD_DPAD_UP, XINPUT_GAMEPAD_DPAD_DOWN,
                     out var dpadY) ||
-                GetDpad("XboxDpadY", XInput.XINPUT_GAMEPAD_DPAD_UP, XInput.XINPUT_GAMEPAD_DPAD_DOWN, out dpadY))
+                GetDpad("XboxDpadY", XINPUT_GAMEPAD_DPAD_UP, XINPUT_GAMEPAD_DPAD_DOWN, out dpadY))
             {
                 return dpadY;
             }
 
             return 0;
 
-            bool TryDoLeftStick(string begin, Func<XInput.XINPUT_GAMEPAD, short> get, out float value)
+            bool TryDoLeftStick(string begin, Func<XINPUT_GAMEPAD, short> get, out float value)
             {
                 if (!TryAndParsePort(begin, out var port))
                 {
@@ -211,7 +257,7 @@ namespace InputFix
                 return true;
             }
 
-            float GetRightStick(Func<XInput.XINPUT_GAMEPAD, short> get)
+            float GetRightStick(Func<XINPUT_GAMEPAD, short> get)
             {
                 return GetGamepadInfo(0, gamepad =>
                 {
@@ -260,7 +306,7 @@ namespace InputFix
                     : null);
         }
 
-        private static T GetGamepadInfo<T>(int port, Func<XInput.XINPUT_GAMEPAD, T?> get) where T : struct
+        private static T GetGamepadInfo<T>(int port, Func<XINPUT_GAMEPAD, T?> get, bool lastFrame=false) where T : struct
         {
             if (port == 0)
             {
@@ -269,7 +315,7 @@ namespace InputFix
                     if (!XInputConnected[i])
                         continue;
 
-                    var value = get(XInputStates[i].Gamepad);
+                    var value = get(GetGamepad(i));
                     if (value.HasValue)
                         return value.Value;
                 }
@@ -289,10 +335,18 @@ namespace InputFix
                     continue;
 
                 if (--c == 0)
-                    return get(XInputStates[i].Gamepad) ?? default;
+                    return get(GetGamepad(i)) ?? default;
             }
 
             return default;
+
+            ref XINPUT_GAMEPAD GetGamepad(int i)
+            {
+                ref var stateDouble = ref XInputStates[i];
+                var gettingA = XInputCurStateA ^ lastFrame;
+                ref var state = ref gettingA ? ref stateDouble.A : ref stateDouble.B;
+                return ref state.Gamepad;
+            }
         }
 
         private static bool PreHookChecks()
@@ -305,6 +359,7 @@ namespace InputFix
             {
                 // Poll XInput once per frame.
                 _lastFrameCount = frameCount;
+                XInputCurStateA ^= true;
                 UpdateXInputState();
             }
 
@@ -313,13 +368,16 @@ namespace InputFix
 
         private static unsafe void UpdateXInputState()
         {
-            fixed (XInput.XINPUT_STATE* state = &XInputStates[0])
+            for (var i = 0; i < 4; i++)
             {
-                for (var i = 0; i < 4; i++)
+                ref var doubleState = ref XInputStates[i];
+                ref var stateRef = ref XInputCurStateA ? ref doubleState.A : ref doubleState.B;
+
+                fixed (XINPUT_STATE* state = &stateRef)
                 {
                     var lastPacketNum = state->dwPacketNumber;
-                    var status = XInput.XInputGetState((uint) i, state + i);
-                    XInputConnected[i] = status == XInput.ERROR_SUCCESS;
+                    var status = XInputGetState((uint) i, state + i);
+                    XInputConnected[i] = status == ERROR_SUCCESS;
 
                     if (DebugXInput && lastPacketNum != state->dwPacketNumber)
                     {
@@ -343,6 +401,13 @@ namespace InputFix
                 code -= 80;
 
             return code;
+        }
+
+        private struct DoubleXInputState
+        {
+            // We keep track of two states so we can implement GetKeyDown() and GetKeyUp()
+            public XINPUT_STATE A;
+            public XINPUT_STATE B;
         }
     }
 }
