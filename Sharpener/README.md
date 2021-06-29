@@ -20,13 +20,16 @@ The mod has three modes:
 
 (all taken at 1080p, open them in fullscreen or something and switch between them)
 
-Original game:
+**Original game:**
+
 ![](ScreenshotDefault.png)
 
-Sharper mode:
+**Sharper mode:**
+
 ![](ScreenshotSharper.png)
 
-Native resolution mode:
+**Native resolution mode:**
+
 ![](ScreenshotNative.png)
 
 ## Technical details for other modders
