@@ -13,7 +13,7 @@ namespace InputFix
         private const byte TriggerThreshold = 127;
         private static bool DebugXInput = false;
 
-        public static bool DoInputFix => InputFixEnabled;
+        public static bool DoInputFix => _cfgEnabled.Value;
 
         private static Func<KeyCode, bool> _trampolineInputGetKey;
         private static NativeDetour _hookInputGetKey;

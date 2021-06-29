@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using BepInEx;
+using BepInEx.Configuration;
 using Menu;
-using RWCustom;
 using UnityEngine;
 
 namespace InputFix
@@ -10,7 +9,7 @@ namespace InputFix
     [BepInPlugin("pjb3005.input_fix", "InputFix", "0.3.1")]
     public partial class InputFix : BaseUnityPlugin
     {
-        public static bool InputFixEnabled = true;
+        private static ConfigEntry<bool> _cfgEnabled;
 
         private static readonly Dictionary<KeyCode, string> KeyCodeNames = new Dictionary<KeyCode, string>
         {
@@ -30,8 +29,10 @@ namespace InputFix
 
         public InputFix()
         {
-            LoadSetting();
-            Debug.Log($"InputFix enabled: {InputFixEnabled}.");
+            Config.SaveOnConfigSet = true;
+            _cfgEnabled = Config.Bind("InputFix", "Enabled", true);
+
+            Debug.Log($"InputFix enabled: {_cfgEnabled.Value}.");
 
             On.Menu.InputOptionsMenu.ctor += InputOptionsMenuOnctor;
             On.Menu.InputOptionsMenu.InputSelectButton.ButtonText += InputSelectButtonOnButtonText;
@@ -131,25 +132,6 @@ namespace InputFix
         }
         */
 
-        private static string SettingFilePath =>
-            Path.Combine(Path.Combine(Custom.RootFolderDirectory(), "UserData"), "inputfix.txt");
-
-        private static void SaveSetting()
-        {
-            File.WriteAllText(SettingFilePath, InputFixEnabled.ToString());
-        }
-
-        private static void LoadSetting()
-        {
-            var filePath = SettingFilePath;
-            if (File.Exists(filePath))
-            {
-                var text = File.ReadAllText(filePath);
-                if (bool.TryParse(text, out var b))
-                    InputFixEnabled = b;
-            }
-        }
-
         private sealed class InputFixEnabledOwner : CheckBox.IOwnCheckBox
         {
             private readonly InputOptionsMenu _menu;
@@ -161,18 +143,16 @@ namespace InputFix
 
             public bool GetChecked(CheckBox box)
             {
-                return InputFixEnabled;
+                return _cfgEnabled.Value;
             }
 
             public void SetChecked(CheckBox box, bool c)
             {
-                InputFixEnabled = c;
-
-                SaveSetting();
+                _cfgEnabled.Value = c;
 
                 UpdateAllGamepadButtonTexts(_menu);
 
-                Debug.Log($"InputFix enabled: {InputFixEnabled}.");
+                Debug.Log($"InputFix enabled: {_cfgEnabled.Value}.");
             }
         }
 
