@@ -376,14 +376,15 @@ namespace InputFix
                 fixed (XINPUT_STATE* state = &stateRef)
                 {
                     var lastPacketNum = state->dwPacketNumber;
-                    var status = XInputGetState((uint) i, state + i);
+                    var status = XInputGetState((uint) i, state);
                     XInputConnected[i] = status == ERROR_SUCCESS;
 
                     if (DebugXInput && lastPacketNum != state->dwPacketNumber)
                     {
-                        ref var gp = ref state->Gamepad;
+                        ref var gp = ref stateRef.Gamepad;
+                        var plus = XInputConnected[i] ? '+' : '-';
                         Debug.Log(
-                            $"XINPUT: [{i}]: {gp.wButtons:X8} ({gp.bLeftTrigger:X2}, {gp.bRightTrigger:X2}) ({gp.sThumbLX},{gp.sThumbLY}) ({gp.sThumbRX},{gp.sThumbRY}) ");
+                            $"XINPUT: [{plus}] [{i}]: {gp.wButtons:X8} ({gp.bLeftTrigger:X2}, {gp.bRightTrigger:X2}) ({gp.sThumbLX},{gp.sThumbLY}) ({gp.sThumbRX},{gp.sThumbRY}) ");
                     }
                 }
             }
