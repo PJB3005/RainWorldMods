@@ -10,7 +10,9 @@ namespace InputFix
 
         public void LateUpdate()
         {
-            if (!_cfgRumbleEnabled.Value || _rainWorld.processManager.currentMainLoop is not RainWorldGame game)
+            if (!_cfgRumbleEnabled.Value ||
+                !_cfgEnabled.Value ||
+                _rainWorld.processManager.currentMainLoop is not RainWorldGame game)
             {
                 ClearRumble();
                 return;
