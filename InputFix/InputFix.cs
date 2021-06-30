@@ -49,7 +49,7 @@ namespace InputFix
 
             Debug.Log("InputFix hooked.");
 
-            On.RoomCamera.Update += RoomCameraOnUpdate;
+            // On.RoomCamera.Update += RoomCameraOnUpdate;
         }
 
         private void RainWorldOnStart(On.RainWorld.orig_Start orig, RainWorld self)
@@ -59,12 +59,14 @@ namespace InputFix
             _rainWorld = self;
         }
 
+        /*
         private static void RoomCameraOnUpdate(On.RoomCamera.orig_Update orig, RoomCamera self)
         {
             orig(self);
 
             Debug.Log($"[{Time.frameCount:0000000}] {self.screenShake} {self.microShake}");
         }
+        */
 
         private static string InputSelectButtonOnButtonText(
             On.Menu.InputOptionsMenu.InputSelectButton.orig_ButtonText orig,
@@ -105,16 +107,29 @@ namespace InputFix
                 labelText = "Steam not running/available - InputFix is probably a bad idea.";
             }
 
+            var menuData = new InputOptionsMenuData();
+            menuData.Menu = self;
+
             var dark = self.inputTesterHolder.darkSprite;
-            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(self), new Vector2(480, 54), 100,
+            var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(menuData), new Vector2(480, 54), 100,
                 "InputFix enabled?", "INPUTFIXENABLED");
             self.pages[0].subObjects.Insert(0, checkBox);
             checkBox.label.label.MoveBehindOtherNode(dark);
             checkBox.symbolSprite.MoveBehindOtherNode(dark);
 
+            var checkBoxRumble = new CheckBox(self, self.pages[0], new RumbleEnabledOwner(), new Vector2(480, 26), 100,
+                "Rumble support?", "RUMBLEENABLED");
+            checkBoxRumble.buttonBehav.greyedOut = !_cfgEnabled.Value;
+            self.pages[0].subObjects.Insert(0, checkBoxRumble);
+            checkBoxRumble.label.label.MoveBehindOtherNode(dark);
+            checkBoxRumble.symbolSprite.MoveBehindOtherNode(dark);
+
             self.MutualHorizontalButtonBind(self.backButton, checkBox);
             self.MutualHorizontalButtonBind(checkBox, self.testButton);
+            self.MutualVerticalButtonBind(checkBoxRumble, checkBox);
 
+            menuData.CheckBoxInputFixEnabled = checkBox;
+            menuData.CheckBoxRumbleEnabled = checkBoxRumble;
 
             var label = new MenuLabel(self, self.pages[0],
                 labelText,
@@ -156,9 +171,9 @@ namespace InputFix
 
         private sealed class InputFixEnabledOwner : CheckBox.IOwnCheckBox
         {
-            private readonly InputOptionsMenu _menu;
+            private readonly InputOptionsMenuData _menu;
 
-            public InputFixEnabledOwner(InputOptionsMenu menu)
+            public InputFixEnabledOwner(InputOptionsMenuData menu)
             {
                 _menu = menu;
             }
@@ -172,11 +187,27 @@ namespace InputFix
             {
                 _cfgEnabled.Value = c;
 
-                UpdateAllGamepadButtonTexts(_menu);
+                UpdateAllGamepadButtonTexts(_menu.Menu);
+
+                _menu.CheckBoxRumbleEnabled.buttonBehav.greyedOut = !c;
 
                 Debug.Log($"InputFix enabled: {_cfgEnabled.Value}.");
             }
         }
+
+        private sealed class RumbleEnabledOwner : CheckBox.IOwnCheckBox
+        {
+            public bool GetChecked(CheckBox box)
+            {
+                return _cfgRumbleEnabled.Value;
+            }
+
+            public void SetChecked(CheckBox box, bool c)
+            {
+                _cfgRumbleEnabled.Value = c;
+            }
+        }
+
 
         private static void UpdateAllGamepadButtonTexts(InputOptionsMenu menu)
         {
@@ -184,6 +215,13 @@ namespace InputFix
             {
                 button.RefreshLabelText();
             }
+        }
+
+        private sealed class InputOptionsMenuData
+        {
+            public InputOptionsMenu Menu;
+            public CheckBox CheckBoxInputFixEnabled;
+            public CheckBox CheckBoxRumbleEnabled;
         }
     }
 }
