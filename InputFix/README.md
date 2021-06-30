@@ -5,6 +5,7 @@ This mod replaces the game's controller handling so it should work better with S
 This means controller handling won't be broken when playing over things like **Steam Remote Play**.
 
 Other features:
+* Optional controller rumble support.
 * Trigger are treated as buttons, so you can bind them.
 * Show better button names in the options menu.
 * Can be fully toggled with a checkbox in the options.
@@ -12,7 +13,7 @@ Other features:
 ## Installation
 
 1. [Have BepInEx and BOI installed](https://www.raindb.net/tutorials.html)
-2. Download the mod from [HERE](https://github.com/PJB3005/RainWorldMods/releases/download/inputfix-0.3.1/InputFix.dll).
+2. Download the mod from [HERE](https://github.com/PJB3005/RainWorldMods/releases/download/inputfix-0.4.0/InputFix.dll).
 3. Install the mod in your mod manager.
 4. **Make sure Steam Input is enabled, see below.**
 
