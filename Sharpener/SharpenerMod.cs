@@ -216,21 +216,6 @@ Shader ""Tutorial/Basic"" {
                 Mode = (RenderMode) (((int) Mode + 1) % 3);
             }
 
-            // Update framebuffers if game resolution changed.
-            if (_gameRes != _gameRenderTexture.Size())
-            {
-                Debug.Log($"Sharpener: Regenerating game render targets: {_gameRes}");
-                Destroy(_gameRenderTexture);
-                _gameRenderTexture = new RenderTexture(_gameRes.x, _gameRes.y, 24);
-
-                Destroy(_upscaler);
-                _upscaler = new RenderTexture(_gameRes.x * 2, _gameRes.y * 2, 0);
-                _upscaler.filterMode = FilterMode.Bilinear;
-            }
-
-            // Set camera target texture if rendering to UpDown.
-            _futile.camera.targetTexture = IsUpDown ? _gameRenderTexture : null;
-
             // Set resolution to fullscreen res if fullscreen and not using GameDefault.
             var shouldSetScreenRes = GameResBackbuffer ? _gameRes : TargetHighRes;
             var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
@@ -246,6 +231,31 @@ Shader ""Tutorial/Basic"" {
                 _realRes = curScreenRes;
                 Debug.Log($"Sharpener: new screen resolution: {_realRes}");
             }
+
+            // Update framebuffers if game resolution changed.
+            if (_gameRes != _gameRenderTexture.Size())
+            {
+                Debug.Log($"Sharpener: Regenerating game render targets: {_gameRes}");
+                Destroy(_gameRenderTexture);
+                _gameRenderTexture = new RenderTexture(_gameRes.x, _gameRes.y, 24);
+            }
+
+            var upscaleFactorX = Math.Ceiling(_realRes.x / (float) _gameRes.x);
+            var upscaleFactorY = Math.Ceiling(_realRes.y / (float) _gameRes.y);
+
+            var scaleFactor = Math.Max(upscaleFactorX, upscaleFactorY);
+            var upscaleRes = _gameRes * (int) scaleFactor;
+
+            if (upscaleRes != _upscaler.Size())
+            {
+                Destroy(_upscaler);
+                _upscaler = new RenderTexture(upscaleRes.x, upscaleRes.y, 0);
+                _upscaler.filterMode = FilterMode.Bilinear;
+            }
+
+            // Set camera target texture if rendering to UpDown.
+            _futile.camera.targetTexture = IsUpDown ? _gameRenderTexture : null;
+
 
             Shader.SetGlobalVector("_realRenderScreenSize",
                 (Mode == RenderMode.NativeNearest ? FullscreenRes : _gameRes).ToVector2());
