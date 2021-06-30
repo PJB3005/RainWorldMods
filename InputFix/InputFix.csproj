@@ -2,9 +2,9 @@
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.3.1</Version>
+    <Version>0.4.0</Version>
     <Company>PJB</Company> <!-- ConfigMachine reads this -->
-    <LangVersion>9</LangVersion> 
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
