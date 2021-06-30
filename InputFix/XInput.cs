@@ -1,4 +1,6 @@
 ﻿using System.Runtime.InteropServices;
+
+// ReSharper disable UnassignedField.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -28,6 +30,9 @@ namespace InputFix
         [DllImport("Xinput1_4.dll")]
         public static extern uint XInputGetState(uint dwUserIndex, XINPUT_STATE* pState);
 
+        [DllImport("Xinput1_4.dll")]
+        public static extern uint XInputSetState(uint dwUserIndex, XINPUT_VIBRATION* pVibration);
+
         public struct XINPUT_STATE
         {
             public uint dwPacketNumber;
@@ -43,6 +48,12 @@ namespace InputFix
             public short sThumbLY;
             public short sThumbRX;
             public short sThumbRY;
+        }
+
+        public struct XINPUT_VIBRATION
+        {
+            public ushort wLeftMotorSpeed;
+            public ushort wRightMotorSpeed;
         }
     }
 }

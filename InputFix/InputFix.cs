@@ -9,7 +9,10 @@ namespace InputFix
     [BepInPlugin("pjb3005.input_fix", "InputFix", "0.3.1")]
     public partial class InputFix : BaseUnityPlugin
     {
+        private RainWorld _rainWorld;
+
         private static ConfigEntry<bool> _cfgEnabled;
+        private static ConfigEntry<bool> _cfgRumbleEnabled;
 
         private static readonly Dictionary<KeyCode, string> KeyCodeNames = new Dictionary<KeyCode, string>
         {
@@ -30,10 +33,13 @@ namespace InputFix
         public InputFix()
         {
             Config.SaveOnConfigSet = true;
+
             _cfgEnabled = Config.Bind("InputFix", "Enabled", true);
+            _cfgRumbleEnabled = Config.Bind("InputFix", "Enable Rumble", false);
 
             Debug.Log($"InputFix enabled: {_cfgEnabled.Value}.");
 
+            On.RainWorld.Start += RainWorldOnStart;
             On.Menu.InputOptionsMenu.ctor += InputOptionsMenuOnctor;
             On.Menu.InputOptionsMenu.InputSelectButton.ButtonText += InputSelectButtonOnButtonText;
             // On.Menu.PauseMenu.ctor += PauseMenuOnctor;
@@ -42,6 +48,22 @@ namespace InputFix
             InitHooks();
 
             Debug.Log("InputFix hooked.");
+
+            On.RoomCamera.Update += RoomCameraOnUpdate;
+        }
+
+        private void RainWorldOnStart(On.RainWorld.orig_Start orig, RainWorld self)
+        {
+            orig(self);
+
+            _rainWorld = self;
+        }
+
+        private static void RoomCameraOnUpdate(On.RoomCamera.orig_Update orig, RoomCamera self)
+        {
+            orig(self);
+
+            Debug.Log($"[{Time.frameCount:0000000}] {self.screenShake} {self.microShake}");
         }
 
         private static string InputSelectButtonOnButtonText(
