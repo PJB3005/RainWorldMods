@@ -16,17 +16,17 @@ namespace InputFix
         public static bool DoInputFix => _cfgEnabled.Value;
 
         private static Func<KeyCode, bool> _trampolineInputGetKey;
-        private static NativeDetour _hookInputGetKey;
+        private static IDetour _hookInputGetKey;
         private static Func<KeyCode, bool> _trampolineInputGetKeyUp;
-        private static NativeDetour _hookInputGetKeyUp;
+        private static IDetour _hookInputGetKeyUp;
         private static Func<KeyCode, bool> _trampolineInputGetKeyDown;
-        private static NativeDetour _hookInputGetKeyDown;
+        private static IDetour _hookInputGetKeyDown;
         private static Func<string[]> _trampolineInputGetJoystickNames;
-        private static NativeDetour _hookInputGetJoystickNames;
+        private static IDetour _hookInputGetJoystickNames;
         private static Func<string, float> _trampolineInputGetAxisRaw;
-        private static NativeDetour _hookInputGetAxisRaw;
+        private static IDetour _hookInputGetAxisRaw;
         private static Func<bool> _trampolineInputAnyKey;
-        private static NativeDetour _hookInputAnyKey;
+        private static IDetour _hookInputAnyKey;
 
         // If true, A is the current state for this frame.
         private static bool XInputCurStateA;
@@ -51,31 +51,34 @@ namespace InputFix
         private static void InitHooks()
         {
             // Input.GetKey(KeyCode)
-            MakeNativeHook(
+            MakeHook(
                 nameof(Input.GetKey),
                 nameof(HookInputGetKey),
                 new[] {typeof(KeyCode)},
                 out _trampolineInputGetKey,
-                out _hookInputGetKey);
+                out _hookInputGetKey,
+                runtime: true);
 
             // Input.GetKeyDown(KeyCode)
-            MakeNativeHook(
+            MakeHook(
                 nameof(Input.GetKeyDown),
                 nameof(HookInputGetKeyDown),
                 new[] {typeof(KeyCode)},
                 out _trampolineInputGetKeyDown,
-                out _hookInputGetKeyDown);
+                out _hookInputGetKeyDown,
+                runtime: true);
 
             // Input.GetKeyUp(KeyCode)
-            MakeNativeHook(
+            MakeHook(
                 nameof(Input.GetKeyUp),
                 nameof(HookInputGetKeyUp),
                 new[] {typeof(KeyCode)},
                 out _trampolineInputGetKeyUp,
-                out _hookInputGetKeyUp);
+                out _hookInputGetKeyUp,
+                runtime: true);
 
             // Input.GetJoystickNames()
-            MakeNativeHook(
+            MakeHook(
                 nameof(Input.GetJoystickNames),
                 nameof(HookInputGetJoystickNames),
                 new Type[0],
@@ -83,7 +86,7 @@ namespace InputFix
                 out _hookInputGetJoystickNames);
 
             // Input.GetAxisRaw(string)
-            MakeNativeHook(
+            MakeHook(
                 nameof(Input.GetAxisRaw),
                 nameof(HookInputGetAxisRaw),
                 new[] {typeof(string)},
@@ -92,36 +95,38 @@ namespace InputFix
 
             // ReSharper disable once PossibleNullReferenceException
             var getAnyKey = typeof(Input).GetProperty(nameof(Input.anyKey)).GetGetMethod();
-            MakeNativeHook(
+            MakeHook(
                 getAnyKey,
                 nameof(HookInputAnyKey),
                 out _trampolineInputAnyKey,
                 out _hookInputAnyKey);
         }
 
-        private static void MakeNativeHook<TDelegate>(
+        private static void MakeHook<TDelegate>(
             string from,
             string to,
             Type[] paramTypes,
             out TDelegate trampoline,
-            out NativeDetour detour)
+            out IDetour detour,
+            bool runtime = false)
             where TDelegate : Delegate
         {
             var fromMethod = typeof(Input).GetMethod(@from, paramTypes);
 
-            MakeNativeHook(fromMethod, to, out trampoline, out detour);
+            MakeHook(fromMethod, to, out trampoline, out detour, runtime);
         }
 
-        private static void MakeNativeHook<TDelegate>(
+        private static void MakeHook<TDelegate>(
             MethodBase fromMethod,
             string to,
             out TDelegate trampoline,
-            out NativeDetour detour)
+            out IDetour detour,
+            bool runtime = false)
             where TDelegate : Delegate
         {
             var toMethod = typeof(InputFix).GetMethod(to, BindingFlags.NonPublic | BindingFlags.Static);
 
-            detour = new NativeDetour(fromMethod, toMethod);
+            detour = runtime ? new Detour(fromMethod, toMethod) : new NativeDetour(fromMethod, toMethod);
             trampoline = detour.GenerateTrampoline<TDelegate>();
         }
 
