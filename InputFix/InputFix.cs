@@ -114,15 +114,11 @@ namespace InputFix
             var checkBox = new CheckBox(self, self.pages[0], new InputFixEnabledOwner(menuData), new Vector2(480, 54), 100,
                 "InputFix enabled?", "INPUTFIXENABLED");
             self.pages[0].subObjects.Insert(0, checkBox);
-            checkBox.label.label.MoveBehindOtherNode(dark);
-            checkBox.symbolSprite.MoveBehindOtherNode(dark);
 
             var checkBoxRumble = new CheckBox(self, self.pages[0], new RumbleEnabledOwner(), new Vector2(480, 26), 100,
                 "Rumble support?", "RUMBLEENABLED");
             checkBoxRumble.buttonBehav.greyedOut = !_cfgEnabled.Value;
             self.pages[0].subObjects.Insert(0, checkBoxRumble);
-            checkBoxRumble.label.label.MoveBehindOtherNode(dark);
-            checkBoxRumble.symbolSprite.MoveBehindOtherNode(dark);
 
             self.MutualHorizontalButtonBind(self.backButton, checkBox);
             self.MutualHorizontalButtonBind(checkBox, self.testButton);
@@ -151,9 +147,18 @@ namespace InputFix
                 self.pages[0].subObjects.Insert(0, nsLabel);
             }
 
+            MoveCheckBoxBehind(checkBox, dark);
+            MoveCheckBoxBehind(checkBoxRumble, dark);
+        }
+
+        private static void MoveCheckBoxBehind(CheckBox checkBox, FNode behind)
+        {
+            checkBox.label.label.MoveBehindOtherNode(behind);
+            checkBox.symbolSprite.MoveBehindOtherNode(behind);
+
             foreach (var sprite in checkBox.roundedRect.sprites)
             {
-                sprite.MoveBehindOtherNode(dark);
+                sprite.MoveBehindOtherNode(behind);
             }
         }
 
