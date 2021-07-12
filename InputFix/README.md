@@ -13,7 +13,7 @@ Other features:
 ## Installation
 
 1. [Have BepInEx and BOI installed](https://www.raindb.net/tutorials.html)
-2. Download the mod from [HERE](https://github.com/PJB3005/RainWorldMods/releases/download/inputfix-0.4.0/InputFix.dll).
+2. Download the mod from [HERE](https://github.com/PJB3005/RainWorldMods/releases/download/inputfix-0.4.1/InputFix.dll).
 3. Install the mod in your mod manager.
 4. **Make sure Steam Input is enabled, see below.**
 
