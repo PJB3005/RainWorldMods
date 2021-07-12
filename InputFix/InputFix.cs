@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace InputFix
 {
-    [BepInPlugin("pjb3005.input_fix", "InputFix", "0.4.0")]
+    [BepInPlugin("pjb3005.input_fix", "InputFix", "0.4.1")]
     public partial class InputFix : BaseUnityPlugin
     {
         private RainWorld _rainWorld;
