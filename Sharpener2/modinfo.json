@@ -1,0 +1,10 @@
+{
+  "id": "pjb3005.sharpener",
+  "name": "Sharpener",
+  "version": "1.0",
+  "authors": "PJB3005",
+  "description": "Sharpener provides better upscaling and resolution controls for Rain World",
+  "requirements": [],
+  "requirements_names": [],
+  "checksum_override_version": false
+}

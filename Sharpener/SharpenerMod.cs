@@ -149,7 +149,7 @@ Shader ""Tutorial/Basic"" {
             try
             {
                 // Load all our custom shaders
-                Debug.Log("Sharpener: Loading fixed shaders");
+                Logger.LogDebug("Loading fixed shaders");
 
                 var shaders = new Dictionary<string, Shader>();
 
@@ -158,6 +158,8 @@ Shader ""Tutorial/Basic"" {
                 {
                     if (!resource.StartsWith("Sharpener.Shaders.") || !resource.EndsWith(".shader"))
                         continue;
+
+                    Logger.LogDebug($"Loading {resource}");
 
                     using var stream = assembly.GetManifestResourceStream(resource);
                     using var sr = new StreamReader(stream, Encoding.UTF8);
@@ -169,7 +171,7 @@ Shader ""Tutorial/Basic"" {
                     shaders.Add(shader.name, shader);
                 }
 
-                Debug.Log($"Sharpener: {shaders.Count} shaders to replace...");
+                Logger.LogDebug($"{shaders.Count} shaders to replace... {self.Shaders == null}");
 
                 var count = 0;
                 foreach (var fShader in self.Shaders.Values)
@@ -181,7 +183,7 @@ Shader ""Tutorial/Basic"" {
                     }
                 }
 
-                Debug.Log($"Sharpener: Replaced {count} shaders");
+                Logger.LogDebug($"Replaced {count} shaders");
             }
             catch (Exception e)
             {
