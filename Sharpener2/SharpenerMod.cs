@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using BepInEx;
@@ -34,7 +35,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
     // @formatter:on
 
     // Resolution the game wants/expects.
-    private IntVector2 _gameRes = new(600, 400);
+    private IntVector2 _gameRes;
 
     // Real resolution of the game.
     private IntVector2 _realRes;
@@ -65,6 +66,12 @@ public sealed class SharpenerMod : BaseUnityPlugin
                 (SetResolution)HookScreenSetResolution);
 
             _trampolineSetResolution = _detourSetResolution.GenerateTrampoline<SetResolution>();
+
+            // Set both resolution variables to the current resolution Unity picked at startup.
+            // The game will change _gameRes to what it wants, and we'll track that.
+            // Sharpener will change the real res to match settings in Update once initialized.
+            _realRes = _gameRes = new IntVector2(Screen.width, Screen.height);
+            Logger.LogInfo($"Initial game resolution: {_realRes}");
 
             // Screen.get_Width
             var getWidth = typeof(Screen).GetProperty(nameof(Screen.width))!.GetGetMethod();
@@ -104,7 +111,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
         var h = int.Parse(split[1], CultureInfo.InvariantCulture);
 
         _fullscreenRes = new IntVector2(w, h);
-        Logger.LogDebug($"cfg fullscreen res changed to: {_fullscreenRes}");
+        Logger.LogInfo($"cfg fullscreen res changed to: {_fullscreenRes}");
     }
 
     private static void ScreenSafeAreaOnUpdate(On.ScreenSafeArea.orig_Update orig, ScreenSafeArea self)
@@ -116,14 +123,15 @@ public sealed class SharpenerMod : BaseUnityPlugin
     {
         orig(self);
 
-        Logger.LogDebug("Mod init");
-
         try
         {
             MachineConnector.SetRegisteredOI(ModID, _options);
 
             var futile = Futile.instance;
             _cameraScaler = futile.camera.gameObject.AddComponent<Scaler>();
+            // Set first camera depth so it renders after the split-screen camera.
+            // Doing this pre-emptively to probably avoid breaking Futile's split-screen support.
+            futile.camera.depth = 105;
             // Take control of the camera image to do letterboxing ourselves.
             _cameraImageTransform = futile._cameraImage.GetComponent<RectTransform>();
             _cameraImageTransform.anchorMax = Vector2.zero;
@@ -158,7 +166,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
         var (w, h) = CalcScalerSize();
 
-        Logger.LogDebug($"Regenerating scaler render target: {w}x{h}");
+        Logger.LogInfo($"Regenerating scaler render target: {w}x{h}");
 
         _scalerTexture = new RenderTexture(w, h, src.depth, src.format);
         _scalerTexture.filterMode = FilterMode.Bilinear;
@@ -180,11 +188,14 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
     private void Update()
     {
-        if (!_initialized)
-            return;
-
         try
         {
+            if (Input.GetKeyDown(KeyCode.F8) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                DumpLogs();
+
+            if (!_initialized)
+                return;
+
             var shouldSetScreenRes = GetDesiredScreenRes();
             var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
             if (shouldSetScreenRes != curScreenRes)
@@ -197,7 +208,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
             if (curScreenRes != _realRes)
             {
                 _realRes = curScreenRes;
-                Logger.LogDebug($"new screen resolution: {_realRes}");
+                Logger.LogInfo($"new screen resolution: {_realRes}");
             }
 
             var upscaleRes = CalcScalerSize();
@@ -233,7 +244,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
     private static void HookScreenSetResolution(int width, int height, bool fullscreen)
     {
-        Instance.Logger.LogDebug($"Game changing resolution to: {width}x{height} FS: {fullscreen}");
+        Instance.Logger.LogInfo($"Game changing resolution to: {width}x{height} FS: {fullscreen}");
         Instance._gameRes = new IntVector2(width, height);
 
         if (!Instance._initialized)
@@ -292,6 +303,41 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
         size = gameSize * ratio;
         pos = (screenSize - size) / 2;
+    }
+
+    [SuppressMessage("ReSharper", "Unity.NoNullPropagation")]
+    private void DumpLogs()
+    {
+        Logger.LogInfo($"---- Dumping debug logs, send this to PJB ----");
+        Logger.LogInfo($"Initialized: {_initialized}");
+        Logger.LogInfo($"Game Res: {_gameRes}");
+        Logger.LogInfo($"Real Res: {_realRes}");
+        Logger.LogInfo($"Fullscreen: {Screen.fullScreen}");
+        Logger.LogInfo($"Screen size (real): {_trampolineWidth()}x{_trampolineHeight()}");
+        Logger.LogInfo($"Scaler: {_scalerTexture?.Size()}");
+        Logger.LogInfo($"Render: {Futile.screen?.renderTexture?.Size()}");
+        Logger.LogInfo($"-- camera image --");
+        if (_cameraImageTransform is not null)
+        {
+            var image = _cameraImageTransform.GetComponent<RawImage>();
+            Logger.LogInfo($"rect: {_cameraImageTransform.rect}");
+            Logger.LogInfo($"anchorMin: {_cameraImageTransform.anchorMin} anchorMax: {_cameraImageTransform.anchorMax}");
+            Logger.LogInfo($"offsetMin: {_cameraImageTransform.offsetMin} offsetMax: {_cameraImageTransform.offsetMax}");
+            var corners = new Vector3[4];
+            _cameraImageTransform.GetWorldCorners(corners);
+            Logger.LogInfo($"corners: {string.Join(", ", corners)}");
+            Logger.LogInfo($"uv: {image.uvRect}");
+            Logger.LogInfo($"Img size: {image.mainTexture.Size()}");
+
+            Logger.LogInfo($"-- canvas scaler --");
+            var scaler = _cameraImageTransform.GetComponentInParent<CanvasScaler>();
+            Logger.LogInfo($"Reference: {scaler.referenceResolution}");
+            Logger.LogInfo($"Enabled: {scaler.enabled}");
+        }
+        else
+        {
+            Logger.LogInfo($"oops, it's null");
+        }
     }
 
     private static void MakeNativeHook<TDelegate>(
