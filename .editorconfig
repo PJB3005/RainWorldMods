@@ -7,3 +7,6 @@ insert_final_newline = true
 [*.cs]
 indent_size = 4
 indent_style = space
+
+[*.{targets,props,csproj}]
+indent_size = 2
