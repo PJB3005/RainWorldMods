@@ -200,9 +200,11 @@ public sealed class SharpenerMod : BaseUnityPlugin
             var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
             if (shouldSetScreenRes != curScreenRes)
             {
-                curScreenRes = shouldSetScreenRes;
                 var (w, h) = shouldSetScreenRes;
+                Logger.LogInfo($"setting screen resolution: {w}x{h} fs: {Screen.fullScreen}");
                 _trampolineSetResolution(w, h, Screen.fullScreen);
+                // Unity seems difficult and doesn't wanna match the resolution sometimes ???
+                curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
             }
 
             if (curScreenRes != _realRes)
@@ -337,6 +339,19 @@ public sealed class SharpenerMod : BaseUnityPlugin
         else
         {
             Logger.LogInfo($"oops, it's null");
+        }
+
+        Logger.LogInfo("-- displays --");
+        var displays = Display.displays;
+        for (var i = 0; i < displays.Length; i++)
+        {
+            var display = displays[i];
+            Logger.LogInfo($"- display {i} -");
+            Logger.LogInfo($"active       {display.active}");
+            Logger.LogInfo($"systemWidth  {display.systemWidth}");
+            Logger.LogInfo($"systemHeight {display.systemHeight}");
+            Logger.LogInfo($"renderWidth  {display.renderingWidth}");
+            Logger.LogInfo($"renderHeight {display.renderingHeight}");
         }
     }
 
