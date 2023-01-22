@@ -14,6 +14,9 @@ namespace Sharpener;
 [BepInPlugin(ModID, "Sharpener", "0.1.0")]
 public sealed class SharpenerMod : BaseUnityPlugin
 {
+    // See this thread for ranting about Unity resolution management:
+    // https://mastodon.gamedev.place/@PJB/109729660950046933
+
     public const string ModID = "pjb3005.sharpener";
 
     public static SharpenerMod Instance { get; private set; } = default!;
@@ -46,6 +49,9 @@ public sealed class SharpenerMod : BaseUnityPlugin
     private bool _initialized;
 
     private IntVector2 _fullscreenRes;
+
+    // The size we last passed to Screen.setResolution()
+    private IntVector2 _lastSetScreenRes;
 
     public SharpenerMod()
     {
@@ -198,13 +204,13 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
             var shouldSetScreenRes = GetDesiredScreenRes();
             var curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
-            if (shouldSetScreenRes != curScreenRes)
+            if (shouldSetScreenRes != curScreenRes && shouldSetScreenRes != _lastSetScreenRes)
             {
                 var (w, h) = shouldSetScreenRes;
                 Logger.LogInfo($"setting screen resolution: {w}x{h} fs: {Screen.fullScreen}");
                 _trampolineSetResolution(w, h, Screen.fullScreen);
-                // Unity seems difficult and doesn't wanna match the resolution sometimes ???
-                curScreenRes = new IntVector2(_trampolineWidth(), _trampolineHeight());
+                // Note: curScreenRes doesn't apply until next frame, assuming the setResolution call doesn't fail.
+                _lastSetScreenRes = shouldSetScreenRes;
             }
 
             if (curScreenRes != _realRes)

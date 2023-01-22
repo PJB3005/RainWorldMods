@@ -56,11 +56,14 @@ public sealed class SharpenerOptions : OptionInterface
         _mod = mod;
         _log = log;
 
-        var biggest = Screen.resolutions[Screen.resolutions.Length - 1].ToVec();
+        var biggest = new IntVector2(Display.main.systemWidth, Display.main.systemHeight);
+
+        log.LogInfo("Unity reported resolutions: " + string.Join(", ", Screen.resolutions));
 
         _resolutions = Screen.resolutions
             .Select(Shared.ToVec)
             .Concat(CommonResolutions)
+            .Append(biggest)
             .Where(r => r.x <= biggest.x && r.y <= biggest.y)
             .Distinct()
             .OrderBy(x => x.x)
@@ -68,7 +71,7 @@ public sealed class SharpenerOptions : OptionInterface
             .Select(x => $"{x.x}x{x.y}")
             .ToArray();
 
-        log.LogDebug(string.Join(", ", _resolutions));
+        log.LogInfo("Our list of resolutions: " + string.Join(", ", _resolutions));
 
         var defaultRes = _resolutions[_resolutions.Length - 1];
 
