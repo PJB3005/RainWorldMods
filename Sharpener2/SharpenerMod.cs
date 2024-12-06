@@ -183,13 +183,9 @@ public sealed class SharpenerMod : BaseUnityPlugin
     private void UpdateScaleBuffer()
     {
         var src = Futile.screen.renderTexture;
-        if (_scalerTexture is not null)
-        {
-            _scalerTexture.DiscardContents();
-            _scalerTexture.Release();
-        }
+        DestroyScaleBufferCore();
 
-        var (w, h) = CalcScalerSize();
+        var (w, h) = CalcScalerSize(out _, true);
 
         Logger.LogInfo($"Regenerating scaler render target: {w}x{h}");
 
@@ -201,13 +197,37 @@ public sealed class SharpenerMod : BaseUnityPlugin
         Futile.instance._cameraImage.texture = _cameraScaler.DestTexture;
     }
 
-    private IntVector2 CalcScalerSize()
+    private void DestroyScaleBuffer()
+    {
+        Logger.LogInfo("Destroying scaler render target");
+
+        DestroyScaleBufferCore();
+
+        _cameraScaler.DestTexture = null;
+        Futile.instance._cameraImage.texture = Futile.screen.renderTexture;
+    }
+
+    private void DestroyScaleBufferCore()
+    {
+        if (_scalerTexture is not null)
+        {
+            _scalerTexture.DiscardContents();
+            _scalerTexture.Release();
+            _scalerTexture = null;
+        }
+    }
+
+    private IntVector2 CalcScalerSize(out int scaleFactor, bool log = false)
     {
         var gameRes = Futile.screen.renderTexture.Size();
         var upscaleFactorX = Math.Ceiling(_realRes.x / (float)gameRes.x);
         var upscaleFactorY = Math.Ceiling(_realRes.y / (float)gameRes.y);
 
-        var scaleFactor = Math.Max((int)Math.Max(upscaleFactorX, upscaleFactorY), 1);
+        scaleFactor = Math.Max((int)Math.Min(upscaleFactorX, upscaleFactorY), 1);
+
+        if (log)
+            Logger.LogDebug($"CalcScalerSize debug: gameRes: ({gameRes}), upscaleFactorX: {upscaleFactorX}, upscaleFactorY: {upscaleFactorY}, scaleFactor: {scaleFactor}");
+
         return gameRes * scaleFactor;
     }
 
@@ -238,9 +258,17 @@ public sealed class SharpenerMod : BaseUnityPlugin
                 Logger.LogInfo($"new screen resolution: {_realRes}");
             }
 
-            var upscaleRes = CalcScalerSize();
+            var upscaleRes = CalcScalerSize(out var factor);
 
-            if (_scalerTexture is null || upscaleRes != _scalerTexture.Size())
+            if (factor == 1)
+            {
+                if (_scalerTexture is not null)
+                {
+                    // Destroy it since factor == 1, no scaling needed.
+                    DestroyScaleBuffer();
+                }
+            }
+            else if (_scalerTexture is null || upscaleRes != _scalerTexture.Size())
             {
                 // If _scalerTexture is null then futile hasn't initialized yet I guess.
 
