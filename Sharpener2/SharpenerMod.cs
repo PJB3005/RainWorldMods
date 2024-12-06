@@ -23,18 +23,18 @@ public sealed class SharpenerMod : BaseUnityPlugin
 
     private Scaler _cameraScaler = default!;
     private RectTransform? _cameraImageTransform;
-    private readonly SharpenerOptions _options;
+    private SharpenerOptions _options = default!;
 
     // Hooks for making the game believe it's always running at original resolutions.
     // @formatter:off
-    private readonly SetResolution _trampolineSetResolution;
-    private readonly NativeDetour  _detourSetResolution;
-    private readonly NativeDetour  _detourWidth;
-    private readonly Func<int>     _trampolineWidth;
-    private readonly NativeDetour  _detourHeight;
-    private readonly Func<int>     _trampolineHeight;
-    private readonly NativeDetour  _detourMousePosition;
-    private readonly Func<Vector3> _trampolineMousePosition;
+    private SetResolution _trampolineSetResolution = default!;
+    private NativeDetour  _detourSetResolution = default!;
+    private NativeDetour  _detourWidth = default!;
+    private Func<int>     _trampolineWidth = default!;
+    private NativeDetour  _detourHeight = default!;
+    private Func<int>     _trampolineHeight = default!;
+    private NativeDetour  _detourMousePosition = default!;
+    private Func<Vector3> _trampolineMousePosition = default!;
     // @formatter:on
 
     // Resolution the game wants/expects.
@@ -53,7 +53,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
     // The size we last passed to Screen.setResolution()
     private IntVector2 _lastSetScreenRes;
 
-    public SharpenerMod()
+    private void Awake()
     {
         try
         {
