@@ -3,7 +3,7 @@
   "name": "Sharpener",
   "version": "1.4",
   "authors": "PJB3005",
-  "description": "Provides better upscaling and resolution controls for Rain World<LINE>The resolution options in the game's menu control the internal render resolution (thus aspect ratio). For monitor resolution controls, check the Remix menu.<LINE>If the mod breaks rendering, hit Shift+F8 and send BepInEx/LogOutput.log in the game's installation folder to @pjb through Discord. Using the #modding-support channel on the official Rain World Discord is preferred.<LINE><LINE>Trans Rights.",
+  "description": "Provides better upscaling and resolution controls for Rain World<LINE><LINE>Trans Rights.",
   "requirements": [],
   "requirements_names": [],
   "checksum_override_version": false
