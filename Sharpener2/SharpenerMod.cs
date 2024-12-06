@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using BepInEx;
+using Menu;
 using Menu.Remix.MixedUI;
 using MonoMod.RuntimeDetour;
 using RWCustom;
@@ -65,6 +66,7 @@ public sealed class SharpenerMod : BaseUnityPlugin
             On.RainWorld.OnModsInit += RainWorldOnOnModsInit;
             On.Futile.UpdateScreenWidth += FutileOnUpdateScreenWidth;
             On.ScreenSafeArea.Update += ScreenSafeAreaOnUpdate;
+            On.Menu.OptionsMenu.ctor += OptionsMenuCtor;
 
             // Screen.SetResolution()
             _detourSetResolution = new NativeDetour(
@@ -108,6 +110,23 @@ public sealed class SharpenerMod : BaseUnityPlugin
             Logger.LogError($"Failed to initialize: {e}");
             throw;
         }
+    }
+
+    private void OptionsMenuCtor(On.Menu.OptionsMenu.orig_ctor orig, Menu.OptionsMenu self, ProcessManager manager)
+    {
+        orig(self, manager);
+
+        var pos = new Vector2(350f, 500f);
+        var size = new Vector2(self.saveSlotButtons[0].pos.x - pos.x, 60f);
+
+        self.pages[0].subObjects.Add(
+            new MenuLabel(
+                self,
+                self.pages[0],
+                $"Sharpener loaded,\nset native resolution\nvia Remix mod settings\ncurrent: {_realRes.x}x{_realRes.y}",
+                pos,
+                size,
+                false));
     }
 
     private void CfgFullscreenResChanged(string newRes)

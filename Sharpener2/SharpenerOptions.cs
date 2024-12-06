@@ -92,30 +92,34 @@ public sealed class SharpenerOptions : OptionInterface
 
         // Fullscreen mode header
 
+        const int hBlerb = 20;
+
         tab.AddItems(new OpLabel(8, 600 - 20 - 8, "Fullscreen", true)
             { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
+        tab.AddItems(new OpLabel(16, 600 - 20 - 8 - hBlerb, "Use the game's normal options menu to set aspect ratio if you have black bars."));
+
         tab.AddItems(new OpLabel(
-            new Vector2(150, 600 - 20 - 8 - 24 - 8),
+            new Vector2(150, 600 - 20 - 8 - 24 - 8 - hBlerb),
             new Vector2(200, 24),
             "Fullscreen resolution",
             FLabelAlignment.Left));
 
         // Windowed mode header
 
-        tab.AddItems(new OpLabel(8, 482, "Windowed", true)
+        tab.AddItems(new OpLabel(8, 482 - hBlerb, "Windowed", true)
             { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
-        _checkBoxWindowOverride = new OpCheckBox(windowSizeOverride, new Vector2(16, 482 - 8 - 24));
+        _checkBoxWindowOverride = new OpCheckBox(windowSizeOverride, new Vector2(16, 482 - 8 - 24 - hBlerb));
         tab.AddItems(_checkBoxWindowOverride);
 
         tab.AddItems(new OpLabel(
-            new Vector2(16 + 24 + 8, 482 - 8 - 24),
+            new Vector2(16 + 24 + 8, 482 - 8 - 24 - hBlerb),
             new Vector2(200, 24),
             "Override windowed size",
             FLabelAlignment.Left));
 
-        _textBoxWindowSizeWidth = new OpUpdown(windowSizeWidth, new Vector2(16, 482 - 8 - 24 - 14 - 24), 100)
+        _textBoxWindowSizeWidth = new OpUpdown(windowSizeWidth, new Vector2(16, 482 - 8 - 24 - 14 - 24 - hBlerb), 100)
         {
             description = "Override window width"
         };
@@ -123,17 +127,17 @@ public sealed class SharpenerOptions : OptionInterface
 
         _textBoxWindowSizeHeight = new OpUpdown(
             windowSizeHeight,
-            new Vector2(16 + 100 + 24, 482 - 8 - 24 - 14 - 24),
+            new Vector2(16 + 100 + 24, 482 - 8 - 24 - 14 - 24 - hBlerb),
             100)
         {
             description = "Override window height"
         };
         tab.AddItems(_textBoxWindowSizeHeight);
 
-        tab.AddItems(new OpLabel(new Vector2(16 + 100, 482 - 8 - 24 - 14 - 24), new Vector2(24, 30), "X")
+        tab.AddItems(new OpLabel(new Vector2(16 + 100, 482 - 8 - 24 - 14 - 24 - hBlerb), new Vector2(24, 30), "X")
             { verticalAlignment = OpLabel.LabelVAlignment.Center });
 
-        tab.AddItems(new OpComboBox(fullscreenResolution, new Vector2(16, 600 - 20 - 8 - 24 - 8), 120, _resolutions)
+        tab.AddItems(new OpComboBox(fullscreenResolution, new Vector2(16, 600 - 20 - 8 - 24 - 8 - hBlerb), 120, _resolutions)
         {
             description = "The resolution the game will render at to your monitor, after upscaling by Sharpener"
         });
