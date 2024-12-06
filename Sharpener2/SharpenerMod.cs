@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace Sharpener;
 
-[BepInPlugin(ModID, "Sharpener", "0.1.0")]
+[BepInPlugin(ModID, "Sharpener", "1.5.0")]
 public sealed class SharpenerMod : BaseUnityPlugin
 {
     // See this thread for ranting about Unity resolution management:
